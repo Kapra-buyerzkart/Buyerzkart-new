@@ -1,0 +1,89 @@
+require_relative '../node_modules/react-native/scripts/react_native_pods'
+require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+
+platform :ios, '12.4'
+prepare_react_native_project!
+
+# ✅ Fix Firebase modular header issues
+pod 'Firebase', :modular_headers => true
+pod 'FirebaseCoreInternal', :modular_headers => true
+pod 'GoogleUtilities', :modular_headers => true
+pod 'FirebaseCore', :modular_headers => true
+
+flipper_config = FlipperConfiguration.disabled
+
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+target 'Buyerskart' do
+  config = use_native_modules!
+
+  # ✅ Use correct Boost podspec from React Native source
+  pod 'boost', :podspec => '../node_modules/react-native/third-party-podspecs/boost.podspec'
+
+  flags = get_default_flags()
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    :hermes_enabled => false, # You can change to true if you use Hermes
+    :fabric_enabled => flags[:fabric_enabled],
+    :flipper_configuration => flipper_config,
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  pod 'lottie-ios', :path => '../node_modules/lottie-ios'
+  pod 'lottie-react-native', :path => '../node_modules/lottie-react-native'
+
+  target 'BuyerskartTests' do
+    inherit! :complete
+  end
+
+  # ✅ Radial gradient dependency
+  pod 'SRSRadialGradient', :path => '../node_modules/react-native-radial-gradient'
+
+  post_install do |installer|
+    react_native_post_install(installer, :mac_catalyst_enabled => false)
+
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        # ✅ Ensure deployment target compatibility
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.4'
+
+        # ✅ Use C++17 to support std::optional and std::nullopt
+        config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        config.build_settings['CLANG_CXX_LIBRARY'] = 'libc++'
+
+        # ✅ Prevent unnecessary code signing issues
+        config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'
+        config.build_settings['CODE_SIGNING_REQUIRED'] = 'NO'
+
+        # ✅ Fix header search paths
+        config.build_settings['HEADER_SEARCH_PATHS'] ||= ['$(inherited)']
+      end
+
+      # ✅ Suppress Folly build warnings
+      if target.name == 'RCT-Folly'
+        target.build_configurations.each do |config|
+          config.build_settings['OTHER_CPLUSPLUSFLAGS'] = [
+            '-Wno-comma',
+            '-Wno-shorten-64-to-32',
+            '-Wno-documentation'
+          ]
+        end
+      end
+    end
+
+    # ✅ Fix for Xcode 15 simulator build issue
+    installer.aggregate_targets.each do |aggregate_target|
+      aggregate_target.user_project.build_configurations.each do |config|
+        config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+      end
+    end
+
+    # ✅ Fix for M1 and newer Macs
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
+end
