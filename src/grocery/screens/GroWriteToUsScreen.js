@@ -160,7 +160,7 @@ const GroWriteToUsScreen = ({ navigation }) => {
             <View style={styles.addressContainer}>
               <View>
                 <Text style={styles.fontStyle1}>
-                  OFFICE:
+                  HEAD OFFICE:
                 </Text>
                 <Text style={styles.fontStyle3}>
                 Kapra Buyerzkart Digital Commerce Pvt. Ltd
@@ -178,7 +178,7 @@ const GroWriteToUsScreen = ({ navigation }) => {
                 Kerala 682028
                 </Text>
                 <Text style={[styles.fontStyle3, { color: colours.kapraMain }]}>
-                buyerzkart@gmail.com
+                customerservice@kapradaily.com
                 </Text>
                 <Text style={[styles.fontStyle3, { color: colours.reviewBoxRed }]}>
                   +91-9539701110
@@ -192,7 +192,7 @@ const GroWriteToUsScreen = ({ navigation }) => {
                   <Text>{showIcon('call', colours.kapraOrange, windowWidth * (7 / 100))}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  onPress={() => Linking.openURL('mailto:buyerzkart@gmail.com')} 
+                  onPress={() => Linking.openURL('mailto:customerservice@kapradaily.com')} 
                   style={{ height: windowHeight * (6 / 100) }}
                 >
                   <Text>{showIcon('mail', colours.kapraOrange, windowWidth * (7 / 100))}</Text>
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   fontStyle3: {
     fontFamily: 'Montserrat-SemiBold',
-    fontSize: windowWidth * (3.5 / 100),
+    fontSize: windowWidth * (3.4 / 100),
     marginLeft: '10%',
     width: windowWidth*(60/100)
     //color: colours.grey

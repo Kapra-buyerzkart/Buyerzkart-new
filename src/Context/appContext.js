@@ -191,12 +191,14 @@ export const AppContextProvider = ({ children }) => {
   const editPincode = async (item) => {
     
     let prof = await AsyncStorage.getItem('profile');
+    // console.log("1111")
     profile.pincode = item?.pincodeId;
     if (item?.area !== null) {
       profile.pinAddress = item?.area;
       profile.pincode = item?.pincodeId
     }
     await AsyncStorage.setItem('profile', JSON.stringify(profile));
+    // console.log("2222")
     setProfile(profile);
     setDummy(!dummy)
   };

@@ -13,7 +13,8 @@ import {
   Modal,
   Alert,
   Pressable,
-  ImageBackground
+  ImageBackground,
+  Platform
 } from 'react-native';
 import { RadioButton } from 'react-native-paper';
 import Toast from 'react-native-simple-toast';
@@ -65,6 +66,7 @@ import {
   applyBCoin,
   checkAvailability
 } from '../api';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -119,6 +121,8 @@ const GroCartScreen = ({ navigation, route }) => {
   const [availabiltyLoading, setAvailabiltyLoading] = useState(false)
   const [cartItemsIds, setCartItemsIds] = useState([])
 
+  const insets = useSafeAreaInsets();
+
   const reloadData = async () => {
     setProductAvailability(true)
     setAcceptablePayMode('Both')
@@ -143,20 +147,41 @@ const GroCartScreen = ({ navigation, route }) => {
 
   }
 
-  const checkStoreClose = async () => {
-    let res = await getPolicies();
-    if (res && res?.find(obj => obj.stName == 'isStoreOpenInArea').stValue == '0') {
-      setStoreCloseData(res)
-      setStoreCloseModalVisible(true);
-      setDummy(!dummy)
-    } else {
-      setStoreCloseData(null)
-      setStoreCloseModalVisible(false);
-      setDummy(!dummy)
+  // const checkStoreClose = async () => {
+  //   let res = await getPolicies();
+  //   if (res && res?.find(obj => obj.stName == 'isStoreOpenInArea').stValue == '0') {
+  //     setStoreCloseData(res)
+  //     setStoreCloseModalVisible(true);
+  //     setDummy(!dummy)
+  //   } else {
+  //     setStoreCloseData(null)
+  //     setStoreCloseModalVisible(false);
+  //     setDummy(!dummy)
 
+  //   }
+
+  // }
+
+  const checkStoreClose = async () => {
+    // console.log("11111")
+    const res = await getPolicies();
+
+    const isStoreClosed =
+      res &&
+      res.find(obj => obj.stName === 'isStoreOpenInArea')?.stValue === '0';
+
+    if (isStoreClosed) {
+      setStoreCloseData(res);
+      setStoreCloseModalVisible(true);
+    } else {
+      setStoreCloseData(null);
+      setStoreCloseModalVisible(false);
     }
 
-  }
+    setDummy(prev => !prev);
+
+    return isStoreClosed;  // <-- 🚨 important
+  };
 
   const fetchCartData = async () => {
     // setItemCartData(null);
@@ -205,6 +230,7 @@ const GroCartScreen = ({ navigation, route }) => {
                       area: res4[0].area,
                     });
                     setSelectedAddress(res4[0])
+                    await checkStoreClose()
                     let res2 = await getCartSummary(res4[0] ? res4[0]?.custAdressId : 0, deliveryMode);
 
                     setCartSummary(res2);
@@ -231,6 +257,7 @@ const GroCartScreen = ({ navigation, route }) => {
                 area: add.area,
               });
               setSelectedAddress(add)
+              await checkStoreClose()
               let res2 = await getCartSummary(add ? add?.custAdressId : 0, deliveryMode);
               setCartSummary(res2);
               setSummaryLoading(false)
@@ -613,12 +640,14 @@ const GroCartScreen = ({ navigation, route }) => {
 
   const setNewAddress = async (value) => {
     try {
+      showLoader(true)
       // let res = await CheckAddressDeliverable(value.custAdressId);
       if (value.latitude !== null || value.longitude !== null) {
         await editPincode({
           pincodeId: value.pincodeAreaId,
           area: value.area,
         });
+        const isStoreClosed = await checkStoreClose();
         setSelectedAddress(value);
         setSummaryLoading(true)
         let res2 = await getCartSummary(value ? value?.custAdressId : 0, deliveryMode);
@@ -627,14 +656,18 @@ const GroCartScreen = ({ navigation, route }) => {
         setAppliedGiftCards(res2.giftCardsApplied)
         setAppliedGiftCardsSum(res2.giftCarDamount)
         await reloadData()
-        setAddressModalVisible(false),
+        setAddressModalVisible(false)
+        if (!isStoreClosed) {
           setDeliveryOptionModal(true)
+        }
         // scrollViewRef.current.scrollToEnd({ animated: true })
       } else {
         Toast.show('Failed to locate your address. Please edit address or Add new one')
       }
 
     } catch (err) {
+    } finally {
+      showLoader(false)
     }
   }
 
@@ -1494,7 +1527,12 @@ const GroCartScreen = ({ navigation, route }) => {
             overlayColor={Platform.OS == 'ios' ? undefined : 'transparent'}
             reducedTransparencyFallbackColor='black'
           />
-          <Pressable style={[styles.commonModalStyle, { height: windowHeight * (65 / 100), marginTop: windowHeight * (35 / 100), paddingBottom: windowHeight * (2 / 100) }]}>
+          <Pressable style={[styles.commonModalStyle, {
+            height: windowHeight * (65 / 100),
+            marginTop: windowHeight * (35 / 100),
+            // paddingBottom: windowHeight * (2 / 100),
+            paddingBottom: Platform.OS === "android" ? insets.bottom + 40 : windowHeight * (2 / 100),
+          }]}>
             <View style={styles.modalHeader}>
               <Text style={[styles.fontStyle1, { color: colours.primaryWhite }]} >
                 Available Coupons
@@ -1566,7 +1604,7 @@ const GroCartScreen = ({ navigation, route }) => {
                     <AuthButton
                       BackgroundColor={colours.primaryColor}
                       OnPress={() => couponCode.trim() == '' ? Toast.show("Pleas enter a valid coupon code") : applyCouponFun(couponCode)}
-                      ButtonText={'APPLYooo'}
+                      ButtonText={'APPLY'}
                       ButtonWidth={90}
                       FirstColor={colours.kapraOrangeDark}
                       SecondColor={colours.kapraOrange}
@@ -1597,7 +1635,11 @@ const GroCartScreen = ({ navigation, route }) => {
             overlayColor={Platform.OS == 'ios' ? undefined : 'transparent'}
             reducedTransparencyFallbackColor='black'
           />
-          <Pressable style={[styles.commonModalStyle, { height: windowHeight * (65 / 100), marginTop: windowHeight * (35 / 100), paddingBottom: windowHeight * (2 / 100) }]}>
+          <Pressable style={[styles.commonModalStyle, {
+            height: windowHeight * (65 / 100), marginTop: windowHeight * (35 / 100),
+            // paddingBottom: windowHeight * (2 / 100) 
+            paddingBottom: Platform.OS === "android" ? insets.bottom + 40 : windowHeight * (2 / 100)
+          }]}>
             <View style={styles.modalHeader}>
               <Text style={[styles.fontStyle1, { color: colours.primaryWhite }]} >
                 Available Smart Point
@@ -1670,7 +1712,7 @@ const GroCartScreen = ({ navigation, route }) => {
                     <AuthButton
                       BackgroundColor={colours.kapraMain}
                       OnPress={() => applyGiftCards()}
-                      ButtonText={'APPLYNN'}
+                      ButtonText={'APPLY'}
                       ButtonWidth={90}
                       FirstColor={colours.lightRed}
                       SecondColor={colours.primaryPink}

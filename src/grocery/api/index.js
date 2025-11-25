@@ -814,3 +814,8 @@ export const checkAvailability = async () => {
   // const URL = `Order/checkAvailability?custId=${19516}&pincode=${661}`;
   return await getNew(URL);
 }
+
+export const getAvailableLocations = async () => {
+  const URL = `getAvailablePincodeArea`;
+  return await getNew(URL);
+};

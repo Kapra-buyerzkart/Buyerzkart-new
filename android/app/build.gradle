@@ -99,8 +99,8 @@ android {
         applicationId "com.buyerskart.customer"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 25017
-        versionName "3.2.0"
+        versionCode 25022
+        versionName "3.3.0"
     }
 
     splits {

@@ -4,8 +4,8 @@ PODS:
   - BVLinearGradient (2.6.2):
     - React-Core
   - DoubleConversion (1.1.6)
-  - FBAEMKit (18.0.1):
-    - FBSDKCoreKit_Basics (= 18.0.1)
+  - FBAEMKit (18.0.2):
+    - FBSDKCoreKit_Basics (= 18.0.2)
   - FBLazyVector (0.71.4)
   - FBReactNativeSpec (0.71.4):
     - RCT-Folly (= 2021.07.22.00)
@@ -14,18 +14,18 @@ PODS:
     - React-Core (= 0.71.4)
     - React-jsi (= 0.71.4)
     - ReactCommon/turbomodule/core (= 0.71.4)
-  - FBSDKCoreKit (18.0.1):
-    - FBAEMKit (= 18.0.1)
-    - FBSDKCoreKit_Basics (= 18.0.1)
-  - FBSDKCoreKit_Basics (18.0.1)
-  - FBSDKGamingServicesKit (18.0.1):
-    - FBSDKCoreKit (= 18.0.1)
-    - FBSDKCoreKit_Basics (= 18.0.1)
-    - FBSDKShareKit (= 18.0.1)
-  - FBSDKLoginKit (18.0.1):
-    - FBSDKCoreKit (= 18.0.1)
-  - FBSDKShareKit (18.0.1):
-    - FBSDKCoreKit (= 18.0.1)
+  - FBSDKCoreKit (18.0.2):
+    - FBAEMKit (= 18.0.2)
+    - FBSDKCoreKit_Basics (= 18.0.2)
+  - FBSDKCoreKit_Basics (18.0.2)
+  - FBSDKGamingServicesKit (18.0.2):
+    - FBSDKCoreKit (= 18.0.2)
+    - FBSDKCoreKit_Basics (= 18.0.2)
+    - FBSDKShareKit (= 18.0.2)
+  - FBSDKLoginKit (18.0.2):
+    - FBSDKCoreKit (= 18.0.2)
+  - FBSDKShareKit (18.0.2):
+    - FBSDKCoreKit (= 18.0.2)
   - Firebase (10.24.0):
     - Firebase/Core (= 10.24.0)
   - Firebase/Core (10.24.0):
@@ -140,10 +140,7 @@ PODS:
   - libwebp/sharpyuv (1.5.0)
   - libwebp/webp (1.5.0):
     - libwebp/sharpyuv
-  - lottie-ios (3.4.0)
-  - lottie-react-native (5.1.6):
-    - lottie-ios (~> 3.4.0)
-    - React-Core
+  - lottie-ios (3.4.4)
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
     - nanopb/encode (= 2.30910.0)
@@ -159,8 +156,12 @@ PODS:
     - OneSignalXCFramework/OneSignalOutcomes
   - OneSignalXCFramework/OneSignalOutcomes (3.12.10):
     - OneSignalXCFramework/OneSignalCore
+  - Permission-LocationWhenInUse (3.10.1):
+    - RNPermissions
   - PromisesObjC (2.4.0)
-  - razorpay-pod (1.4.6)
+  - razorpay-core-pod (1.0.3)
+  - razorpay-pod (1.5.0):
+    - razorpay-core-pod
   - RCT-Folly (2021.07.22.00):
     - boost
     - DoubleConversion
@@ -420,8 +421,8 @@ PODS:
     - React (< 1.0.0, >= 0.13.0)
   - react-native-otp-verify (1.1.8):
     - React-Core
-  - react-native-razorpay (2.3.0):
-    - razorpay-pod
+  - react-native-razorpay (2.3.1):
+    - razorpay-pod (= 1.5.0)
     - React
   - react-native-render-html (6.3.4):
     - React-Core
@@ -528,6 +529,8 @@ PODS:
     - React-Core
   - RNCMaskedView (0.2.8):
     - React-Core
+  - RNCPicker (2.11.4):
+    - React-Core
   - RNDeviceInfo (10.4.0):
     - React-Core
   - RNFastImage (8.6.3):
@@ -540,6 +543,8 @@ PODS:
   - RNGestureHandler (2.9.0):
     - React-Core
   - RNImageColors (1.5.2):
+    - React-Core
+  - RNPermissions (3.10.1):
     - React-Core
   - RNReanimated (2.14.4):
     - DoubleConversion
@@ -599,8 +604,8 @@ DEPENDENCIES:
   - FirebaseCoreInternal
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
   - GoogleUtilities
-  - lottie-ios (from `../node_modules/lottie-ios`)
-  - lottie-react-native (from `../node_modules/lottie-react-native`)
+  - lottie-ios (~> 3.4.0)
+  - Permission-LocationWhenInUse (from `../node_modules/react-native-permissions/ios/LocationWhenInUse`)
   - RCT-Folly (from `../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec`)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
@@ -649,11 +654,13 @@ DEPENDENCIES:
   - "RNCCheckbox (from `../node_modules/@react-native-community/checkbox`)"
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
+  - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageColors (from `../node_modules/react-native-image-colors`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -679,9 +686,11 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleUtilities
     - libwebp
+    - lottie-ios
     - nanopb
     - OneSignalXCFramework
     - PromisesObjC
+    - razorpay-core-pod
     - razorpay-pod
     - SDWebImage
     - SDWebImageWebPCoder
@@ -701,10 +710,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/React/FBReactNativeSpec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
-  lottie-ios:
-    :path: "../node_modules/lottie-ios"
-  lottie-react-native:
-    :path: "../node_modules/lottie-react-native"
+  Permission-LocationWhenInUse:
+    :path: "../node_modules/react-native-permissions/ios/LocationWhenInUse"
   RCT-Folly:
     :podspec: "../node_modules/react-native/third-party-podspecs/RCT-Folly.podspec"
   RCTRequired:
@@ -799,6 +806,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/clipboard"
   RNCMaskedView:
     :path: "../node_modules/@react-native-masked-view/masked-view"
+  RNCPicker:
+    :path: "../node_modules/@react-native-picker/picker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNFastImage:
@@ -809,6 +818,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageColors:
     :path: "../node_modules/react-native-image-colors"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
@@ -824,17 +835,17 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   BEMCheckBox: 5ba6e37ade3d3657b36caecc35c8b75c6c2b1a4e
-  boost: 64032b9e9b938fda23325e68a3771f0fabf414dc
+  boost: 7dcd2de282d72e344012f7d6564d024930a6a440
   BVLinearGradient: 7815a70ab485b7b155186dd0cc836363e0288cad
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
-  FBAEMKit: b2ed182002dbcb65d5a60059c9693d322186cd00
+  FBAEMKit: 56a4f5a9607957b547b6458b17a98c5bb2736367
   FBLazyVector: 446e84642979fff0ba57f3c804c2228a473aeac2
   FBReactNativeSpec: 241709e132e3bf1526c1c4f00bc5384dd39dfba9
-  FBSDKCoreKit: 7f96852f2539bdb88ba8d47e5ab4ae70a6f8d691
-  FBSDKCoreKit_Basics: 22d4c1a509ded4e45116f3bb167a14907550f62e
-  FBSDKGamingServicesKit: acde62310212678446f81b0a14da88231b918feb
-  FBSDKLoginKit: f48c06446995cd209332831f692cea28b26e51da
-  FBSDKShareKit: d3fef7f6690e173369134beb5f43983d7338e933
+  FBSDKCoreKit: 54f1240567e16862ab71c53c33dc347db5c524c5
+  FBSDKCoreKit_Basics: eb530cd6a79030dbb11df460aafb2767bcad9028
+  FBSDKGamingServicesKit: a967e47b5cbf759fb3e42a87f11a999aa7c36b24
+  FBSDKLoginKit: 6a70798793e499335a98fab1a758d7da34af196e
+  FBSDKShareKit: e52c6b1584c77c708bcb4001c9a48223c115cbd9
   Firebase: 91fefd38712feb9186ea8996af6cbdef41473442
   FirebaseAnalytics: b5efc493eb0f40ec560b04a472e3e1a15d39ca13
   FirebaseCore: 11dc8a16dfb7c5e3c3f45ba0e191a33ac4f50894
@@ -845,12 +856,13 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: f3abf08495ef2cba7829f15318c373b8d9226491
   GoogleUtilities: ea963c370a38a8069cc5f7ba4ca849a60b6d7d15
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
-  lottie-ios: 69495122151a378fdc7d1bb4c5930347e37baf1f
-  lottie-react-native: 5d89c05930d4180a1e39b1757d46e6c0eec90255
+  lottie-ios: 8f97d3271e155c2d688875c29cd3c74908aef5f8
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
   OneSignalXCFramework: e458f7a374192598a1d66418e1b61481c3cdf0e9
+  Permission-LocationWhenInUse: e4a1bdc6b9f4a7a598613a6a748bd186e937df34
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  razorpay-pod: 8fd83144fc0fcac6ad5901962303c1a5a4cbdc7a
+  razorpay-core-pod: ef0309dbf8e3e5a1330f6cad89dcf9226d8ef758
+  razorpay-pod: f634f1b8397eb54d547f25d35291f679545ddf17
   RCT-Folly: 8dc08ca5a393b48b1c523ab6220dfdcc0fe000ad
   RCTRequired: 5a024fdf458fa8c0d82fc262e76f982d4dcdecdd
   RCTTypeSafety: b6c253064466411c6810b45f66bc1e43ce0c54ba
@@ -875,7 +887,7 @@ SPEC CHECKSUMS:
   react-native-maps: 38394e3f4258d7fe8f1241c2624b91acf35e2dd5
   react-native-onesignal: 8d8f7d5e2cc44239fc0ec72fe9c6d27b939870fc
   react-native-otp-verify: 6d153f8a8e8392c6a51f9d94c090dc16d7c756b2
-  react-native-razorpay: ab51e7be3d906f49b26198d978fc6f163e846d30
+  react-native-razorpay: 376ba84b614ef8a22b5701df4ffee10f4c116d14
   react-native-render-html: 5afc4751f1a98621b3009432ef84c47019dcb2bd
   react-native-restart: 0bc732f4461709022a742bb29bcccf6bbc5b4863
   react-native-safe-area-context: 863c9695a24b9e6bb6c412f1c8ddb4dfc3ae3862
@@ -898,11 +910,13 @@ SPEC CHECKSUMS:
   RNCCheckbox: 33b44487ca8008394ce658cc32b26eab04f426ef
   RNCClipboard: b0541df1bb88935d40bdc93b41b7d8e3334c998a
   RNCMaskedView: 90a18f1e65b81985232eb6f5ea594300a4b6a09f
+  RNCPicker: 7de564dce1f90b53e386a24001aafc3578233dfe
   RNDeviceInfo: 85ae8ab777acc733bdff12ebdfae3e91a577a013
   RNFastImage: 462a183c4b0b6b26fdfd639e1ed6ba37536c3b87
   RNFBApp: 5ee7b01b1821f27f5749dda020fa09fa6c6975cd
   RNGestureHandler: 5fe9e4f847b51d8cc9006cec6c7dc6718dd82809
   RNImageColors: 977420bca17290f111104bcfcbfb698982cbfbba
+  RNPermissions: bd0d9ca7969ff7b999aa605ee2e5919c12522bfe
   RNReanimated: 96faf89fef41e16cacaf3e3231cf6a34d672e864
   RNScreens: 67dd26e0c1e6df63f4ccaaf281c1ecdd88c995c3
   RNSVG: 67c430ac7a54043cac37f6bd7bc94f8e22d8a64a
@@ -914,6 +928,6 @@ SPEC CHECKSUMS:
   Yoga: 79dd7410de6f8ad73a77c868d3d368843f0c93e0
   YoutubePlayer-in-WKWebView: 2c3aa1d5ad8dded9f95ef12033af5dd8e55864b7
 
-PODFILE CHECKSUM: 3f564f7368d1ac68499e2dbb427744e8e42395df
+PODFILE CHECKSUM: bd7f4a8cd38130abd95759f08ee2c482250acdd7
 
 COCOAPODS: 1.16.2

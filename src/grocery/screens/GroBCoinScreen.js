@@ -16,35 +16,38 @@ import {
 import moment from 'moment';
 import Toast from 'react-native-simple-toast';
 
-import { redeemWallet, getBCoin, getBToken, redeemBCoin, getValueHistory, getCoinRedeemModes  } from '../api';
+import { redeemWallet, getBCoin, getBToken, redeemBCoin, getValueHistory, getCoinRedeemModes } from '../api';
 import { LoaderContext } from '../../Context/loaderContext';
 import colours from '../../globals/colours';
 import showIcon from '../../globals/icons';
 import AuthButton from '../components/AuthButton';
 import { getFontontSize } from '../globals/GroFunctions';
 import { AppContext } from '../../Context/appContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 export default function GroBCoinScreen({ navigation, route }) {
-  
+
   const { showLoader, loading } = React.useContext(LoaderContext);
   const { profile } = React.useContext(AppContext)
 
-  const [ data, setData ] = React.useState(null);
-  const [ bCoin, setBCoin ] = React.useState(null);
-  const [ bToken, setBToken ] = React.useState(null);
-  const [ switchValue, setSwitchValue ] = React.useState('WAL')
-  const [ redeemModes, setRedeemModes ] = React.useState(null);
-  const [ coinValueHistory, setCoinValueHistory ] = React.useState(null);
-  const [ selectedMode, setSelectedMode ] = React.useState('');
-  const [ redeemModal, setRedeemModal ] = React.useState(false);
-  const [ coinHistoryModal, setCoinHistoryModal ] = React.useState(false);
+  const [data, setData] = React.useState(null);
+  const [bCoin, setBCoin] = React.useState(null);
+  const [bToken, setBToken] = React.useState(null);
+  const [switchValue, setSwitchValue] = React.useState('WAL')
+  const [redeemModes, setRedeemModes] = React.useState(null);
+  const [coinValueHistory, setCoinValueHistory] = React.useState(null);
+  const [selectedMode, setSelectedMode] = React.useState('');
+  const [redeemModal, setRedeemModal] = React.useState(false);
+  const [coinHistoryModal, setCoinHistoryModal] = React.useState(false);
+
+  const insets = useSafeAreaInsets();
 
   const _fetchCoinData = async () => {
     setBCoin(null),
-    setBToken(null)
+      setBToken(null)
     try {
       showLoader(true);
       // let res = await getWallet();
@@ -67,36 +70,36 @@ export default function GroBCoinScreen({ navigation, route }) {
     _fetchCoinData();
   }, []);
 
-  const _redeemWallet = async() => {
-    if(data.walletDetails&&!data.walletDetails[0].isRequest){
-      if( data.walletDetails[0].amount>= data.walletDetails[0].walletMinRedeemAmount ) {
+  const _redeemWallet = async () => {
+    if (data.walletDetails && !data.walletDetails[0].isRequest) {
+      if (data.walletDetails[0].amount >= data.walletDetails[0].walletMinRedeemAmount) {
         try {
-            showLoader(true);
-            let res = await redeemWallet();
-            // setData(res);
-            // let res1 = await getRefHistory();
-            // setRefData(res1)
-            _fetchCoinData();
-            showLoader(false);
-          } catch (err) {
-            showLoader(false);
-          }
+          showLoader(true);
+          let res = await redeemWallet();
+          // setData(res);
+          // let res1 = await getRefHistory();
+          // setRefData(res1)
+          _fetchCoinData();
+          showLoader(false);
+        } catch (err) {
+          showLoader(false);
         }
-        else {
-          Toast.show(`Minimum redeem amount : ${data.walletDetails[0].walletMinRedeemAmount}`)
-        }
+      }
+      else {
+        Toast.show(`Minimum redeem amount : ${data.walletDetails[0].walletMinRedeemAmount}`)
+      }
     }
     else {
       Toast.show(`Already request submitted for redeem`)
     }
   }
 
-  const _funRedeemBCoin = async() => {
-    try{
+  const _funRedeemBCoin = async () => {
+    try {
       showLoader(true);
       let res = await redeemBCoin({
         custId: profile.groceryCustId,
-        bCoinsAmount: 0 ,
+        bCoinsAmount: 0,
         mode: selectedMode
       });
       Toast.show('Redeem request submitted.')
@@ -105,20 +108,20 @@ export default function GroBCoinScreen({ navigation, route }) {
       _fetchCoinData()
       showLoader(false);
 
-    } catch(err){
+    } catch (err) {
       showLoader(false);
       setRedeemModal(false)
       setSelectedMode('')
     }
   }
-  
+
   return (
     <SafeAreaView style={styles.mainContainer}>
 
       {/* Header Con  */}
       <View style={styles.headerCon}>
-        <TouchableOpacity style={styles.backButtonCon} onPress={()=>navigation.goBack()}>
-          {showIcon('back2', colours.kapraBlack, windowWidth*(5/100))}
+        <TouchableOpacity style={styles.backButtonCon} onPress={() => navigation.goBack()}>
+          {showIcon('back2', colours.kapraBlack, windowWidth * (5 / 100))}
         </TouchableOpacity>
         <Text style={styles.headerText}>Add Address</Text>
       </View>
@@ -126,45 +129,45 @@ export default function GroBCoinScreen({ navigation, route }) {
       {/* Coin Container  */}
       <>
         <View style={styles.walletAmountCard}>
-            <Image
-              source={require('../../assets/images/Bcoin.png')}
-              style={styles.walletAmountImg}
-            />
-            <View style={{alignItems:'flex-end'}}>
-              <Text style={styles.fontStyle1}>B-Coin Balance </Text>
-              <Text/>
-              <Text style={styles.fontStyle2}>{(bCoin&&bCoin[0]?.BCoinBalance)?bCoin[0]?.BCoinBalance:'0'}</Text>
-              {
-                (bCoin&&bCoin[0]?.bCoinValue)&&(
-                  <Text style={styles.fontStyle5}>( Today's B-Coin Value :<Text style={[styles.fontStyle1,{fontSize: getFontontSize(11)}]}> ₹{(bCoin&&bCoin[0]?.bCoinValue)?bCoin[0]?.bCoinValue:'0'} </Text>)</Text>
-                )
-              }
-              <Text/>
-              <TouchableOpacity onPress={()=>setCoinHistoryModal(true)} style={styles.iconCon}>
-                {showIcon('rightarrow', colours.primaryBlack, windowWidth * (7 / 100))}
-              </TouchableOpacity>
-            </View>
+          <Image
+            source={require('../../assets/images/Bcoin.png')}
+            style={styles.walletAmountImg}
+          />
+          <View style={{ alignItems: 'flex-end' }}>
+            <Text style={styles.fontStyle1}>B-Coin Balance </Text>
+            <Text />
+            <Text style={styles.fontStyle2}>{(bCoin && bCoin[0]?.BCoinBalance) ? bCoin[0]?.BCoinBalance : '0'}</Text>
+            {
+              (bCoin && bCoin[0]?.bCoinValue) && (
+                <Text style={styles.fontStyle5}>( Today's B-Coin Value :<Text style={[styles.fontStyle1, { fontSize: getFontontSize(11) }]}> ₹{(bCoin && bCoin[0]?.bCoinValue) ? bCoin[0]?.bCoinValue : '0'} </Text>)</Text>
+              )
+            }
+            <Text />
+            <TouchableOpacity onPress={() => setCoinHistoryModal(true)} style={styles.iconCon}>
+              {showIcon('rightarrow', colours.primaryBlack, windowWidth * (7 / 100))}
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.walletAmountCard}>
-            <Image
-              source={require('../../assets/images/Btoken.png')}
-              style={styles.walletAmountImg}
-            />
-            <View style={{
-              alignItems:'flex-end'
-            }}>
-              <Text style={styles.fontStyle1}>B-Token Balance </Text>
-              <Text/>
-              <Text style={styles.fontStyle2}>{(bToken&&bToken[0]?.BTokenBalance)?bToken[0]?.BTokenBalance:'0'}</Text>
-            </View>
+          <Image
+            source={require('../../assets/images/Btoken.png')}
+            style={styles.walletAmountImg}
+          />
+          <View style={{
+            alignItems: 'flex-end'
+          }}>
+            <Text style={styles.fontStyle1}>B-Token Balance </Text>
+            <Text />
+            <Text style={styles.fontStyle2}>{(bToken && bToken[0]?.BTokenBalance) ? bToken[0]?.BTokenBalance : '0'}</Text>
+          </View>
         </View>
       </>
 
       {/* Switch Buttons  */}
       <View style={styles.switchCon}>
         <AuthButton
-          FirstColor={switchValue === 'WAL'?colours.kapraOrange : colours.kapraBlackLight}
-          SecondColor={switchValue === 'WAL'?colours.kapraOrangeDark : colours.kapraMain}
+          FirstColor={switchValue === 'WAL' ? colours.kapraOrange : colours.kapraBlackLight}
+          SecondColor={switchValue === 'WAL' ? colours.kapraOrangeDark : colours.kapraMain}
           OnPress={() => setSwitchValue('WAL')}
           ButtonText={'BCoin History'}
           ButtonWidth={44}
@@ -172,8 +175,8 @@ export default function GroBCoinScreen({ navigation, route }) {
           FSize={12}
         />
         <AuthButton
-          FirstColor={switchValue === 'REF'?colours.kapraOrange : colours.kapraBlackLight}
-          SecondColor={switchValue === 'REF'?colours.kapraOrangeDark : colours.kapraMain}
+          FirstColor={switchValue === 'REF' ? colours.kapraOrange : colours.kapraBlackLight}
+          SecondColor={switchValue === 'REF' ? colours.kapraOrangeDark : colours.kapraMain}
           OnPress={() => setSwitchValue('REF')}
           ButtonText={'BToken History'}
           ButtonWidth={44}
@@ -182,84 +185,84 @@ export default function GroBCoinScreen({ navigation, route }) {
         />
       </View>
 
-      <ScrollView contentContainerStyle={{width: windowWidth, alignItems:'center'}}>
-      {
-        switchValue === 'WAL'?
+      <ScrollView contentContainerStyle={{ width: windowWidth, alignItems: 'center' }}>
+        {
+          switchValue === 'WAL' ?
 
-        // Flatlist 1 
-        <>
-          <FlatList
-            contentContainerStyle={styles.flatlistCon}
-            data={bCoin}
-            renderItem={({ item, i }) => (
-              <View style={styles.flatlistRowCon}>
-                {
-                  item.transactionType == 'Credit'?
-                  <Image
-                    source={require('../../assets/images/CreditIcon.png')}
-                    style={styles.flatlistRowImgCon}
-                  />
-                  :
-                  <Image
-                    source={require('../../assets/images/DebitIcon.png')}
-                    style={styles.flatlistRowImgCon}
-                  />
-                }
-                <Text style={[styles.fontStyle4,{width: windowWidth*(30/100),color: item.transactionType == 'Credit'? colours.primaryGreen: colours.primaryRed}]} numberOfLines={3}>  {item.description}</Text>
-                <Text style={[styles.fontStyle4,{color: item.transactionType == 'Credit'? colours.primaryGreen: colours.primaryRed}]}>{moment(item.transactionDate).format('DD-MM-YYYY')}</Text>
-                <Text style={[styles.fontStyle4,{color: item.transactionType == 'Credit'? colours.primaryGreen: colours.primaryRed}]}>₹ {item.amount}</Text>
-              </View>
-            )}
-            keyExtractor={(item, i) => i.toString()}
-          />
-        </>
-        :
+            // Flatlist 1 
+            <>
+              <FlatList
+                contentContainerStyle={styles.flatlistCon}
+                data={bCoin}
+                renderItem={({ item, i }) => (
+                  <View style={styles.flatlistRowCon}>
+                    {
+                      item.transactionType == 'Credit' ?
+                        <Image
+                          source={require('../../assets/images/CreditIcon.png')}
+                          style={styles.flatlistRowImgCon}
+                        />
+                        :
+                        <Image
+                          source={require('../../assets/images/DebitIcon.png')}
+                          style={styles.flatlistRowImgCon}
+                        />
+                    }
+                    <Text style={[styles.fontStyle4, { width: windowWidth * (30 / 100), color: item.transactionType == 'Credit' ? colours.primaryGreen : colours.primaryRed }]} numberOfLines={3}>  {item.description}</Text>
+                    <Text style={[styles.fontStyle4, { color: item.transactionType == 'Credit' ? colours.primaryGreen : colours.primaryRed }]}>{moment(item.transactionDate).format('DD-MM-YYYY')}</Text>
+                    <Text style={[styles.fontStyle4, { color: item.transactionType == 'Credit' ? colours.primaryGreen : colours.primaryRed }]}>₹ {item.amount}</Text>
+                  </View>
+                )}
+                keyExtractor={(item, i) => i.toString()}
+              />
+            </>
+            :
 
-        // Flatlist 2
-        <>
-        <FlatList
-          contentContainerStyle={styles.flatlistCon}
-          data={bToken}
-          renderItem={({ item, i }) => (
-            <View style={styles.flatlistRowCon}>
-              {
-                item.transactionType == 'Credit'?
-                <Image
-                  source={require('../../assets/images/CreditIcon.png')}
-                  style={styles.flatlistRowImgCon}
-                />
-                :
-                <Image
-                  source={require('../../assets/images/DebitIcon.png')}
-                  style={styles.flatlistRowImgCon}
-                />
-              }
+            // Flatlist 2
+            <>
+              <FlatList
+                contentContainerStyle={styles.flatlistCon}
+                data={bToken}
+                renderItem={({ item, i }) => (
+                  <View style={styles.flatlistRowCon}>
+                    {
+                      item.transactionType == 'Credit' ?
+                        <Image
+                          source={require('../../assets/images/CreditIcon.png')}
+                          style={styles.flatlistRowImgCon}
+                        />
+                        :
+                        <Image
+                          source={require('../../assets/images/DebitIcon.png')}
+                          style={styles.flatlistRowImgCon}
+                        />
+                    }
 
-              <Text style={[styles.fontStyle4,{width: windowWidth*(30/100),color: item.transactionType == 'Credit'? colours.primaryGreen: colours.primaryRed}]} numberOfLines={3}>  {item.description}</Text>
-              <Text style={[styles.fontStyle4,{color: item.transactionType == 'Credit'? colours.primaryGreen: colours.primaryRed}]}>{moment(item.transactionDate).format('DD-MM-YYYY')}</Text>
-              <Text style={[styles.fontStyle4,{color: item.transactionType == 'Credit'? colours.primaryGreen: colours.primaryRed}]}>₹ {item.amount}</Text>
-            </View>
-          )}
-          keyExtractor={(item, i) => i.toString()}
-        />
-        </>
-      }
+                    <Text style={[styles.fontStyle4, { width: windowWidth * (30 / 100), color: item.transactionType == 'Credit' ? colours.primaryGreen : colours.primaryRed }]} numberOfLines={3}>  {item.description}</Text>
+                    <Text style={[styles.fontStyle4, { color: item.transactionType == 'Credit' ? colours.primaryGreen : colours.primaryRed }]}>{moment(item.transactionDate).format('DD-MM-YYYY')}</Text>
+                    <Text style={[styles.fontStyle4, { color: item.transactionType == 'Credit' ? colours.primaryGreen : colours.primaryRed }]}>₹ {item.amount}</Text>
+                  </View>
+                )}
+                keyExtractor={(item, i) => i.toString()}
+              />
+            </>
+        }
       </ScrollView>
 
       {/* Bottom Button  */}
       {
-        bCoin&&(
+        bCoin && (
           <AuthButton
-            SecondColor={(bCoin&&(bCoin[0]?.BCoinBalance > bCoin[0]?.bcoinMinRedeemAmount) && !bCoin[0]?.isRequested)?colours.primaryGreen : colours.primaryGrey}
-            FirstColor={(bCoin&&(bCoin[0]?.BCoinBalance > bCoin[0]?.bcoinMinRedeemAmount) && !bCoin[0]?.isRequested)?colours.primaryGreen : colours.primaryGrey}
-            OnPress={() => (bCoin&&(bCoin[0]?.BCoinBalance > bCoin[0]?.bcoinMinRedeemAmount) && !bCoin[0]?.isRequested)? setRedeemModal(true) : bCoin[0]?.isRequested?Toast.show('Already requested') : Toast.show("You need more B-Coins to redeem.")}
+            SecondColor={(bCoin && (bCoin[0]?.BCoinBalance > bCoin[0]?.bcoinMinRedeemAmount) && !bCoin[0]?.isRequested) ? colours.primaryGreen : colours.primaryGrey}
+            FirstColor={(bCoin && (bCoin[0]?.BCoinBalance > bCoin[0]?.bcoinMinRedeemAmount) && !bCoin[0]?.isRequested) ? colours.primaryGreen : colours.primaryGrey}
+            OnPress={() => (bCoin && (bCoin[0]?.BCoinBalance > bCoin[0]?.bcoinMinRedeemAmount) && !bCoin[0]?.isRequested) ? setRedeemModal(true) : bCoin[0]?.isRequested ? Toast.show('Already requested') : Toast.show("You need more B-Coins to redeem.")}
             ButtonText={'Redeem B-Coin'}
             ButtonWidth={90}
             ButtonHeight={5}
           />
         )
       }
-      <Text/>
+      <Text />
 
       {/* Redeem Coin Modal  */}
       <Modal
@@ -267,13 +270,15 @@ export default function GroBCoinScreen({ navigation, route }) {
         visible={redeemModal}
         transparent={true}
       >
-        <View style={{width:windowWidth, height: windowHeight, backgroundColor: 'rgba(100, 100, 100,0.3)'}}>
-          <View style={styles.updateModalView1}>
+        <View style={{ width: windowWidth, height: windowHeight, backgroundColor: 'rgba(100, 100, 100,0.3)' }}>
+          <View style={[styles.updateModalView1, {
+            paddingBottom: Platform.OS === "android" ? insets.bottom + 40 : windowHeight * (2 / 100)
+          }]}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.fontStyle1,{color: colours.primaryWhite}]} >
+              <Text style={[styles.fontStyle1, { color: colours.primaryWhite }]} >
                 Select a redeem mode
               </Text>
-              <TouchableOpacity onPress={() => setRedeemModal(false) }>
+              <TouchableOpacity onPress={() => setRedeemModal(false)}>
                 <Text>
                   {showIcon('close', colours.primaryWhite, windowWidth * (7 / 100))}
                 </Text>
@@ -283,22 +288,22 @@ export default function GroBCoinScreen({ navigation, route }) {
               <FlatList
                 data={redeemModes}
                 renderItem={({ item, index }) => (
-                  <TouchableOpacity onPress={()=>setSelectedMode(item.mode)} style={[styles.coinHistoryCon,{backgroundColor: index%2 == 0?colours.lightPink:colours.kapraLow,}]}>
+                  <TouchableOpacity onPress={() => setSelectedMode(item.mode)} style={[styles.coinHistoryCon, { backgroundColor: index % 2 == 0 ? colours.lightPink : colours.kapraLow, }]}>
                     <Text style={styles.fontStyle1}>{item.mode}</Text>
                     {
-                      selectedMode == item.mode &&(
-                          <Text>
-                            {showIcon('rightTick', colours.kapraMain, windowWidth * (7 / 100))}
-                          </Text>
+                      selectedMode == item.mode && (
+                        <Text>
+                          {showIcon('rightTick', colours.kapraMain, windowWidth * (7 / 100))}
+                        </Text>
                       )
                     }
                   </TouchableOpacity>
                 )}
                 ListEmptyComponent={
                   <View>
-                    <Text/>
-                    <Text/>
-                    <Text/>
+                    <Text />
+                    <Text />
+                    <Text />
                     <Text>No History Found</Text>
                   </View>
                 }
@@ -308,12 +313,12 @@ export default function GroBCoinScreen({ navigation, route }) {
             </ScrollView>
             <AuthButton
               SecondColor={colours.kapraMain}
-              FirstColor={colours.kapraMain }
-              OnPress={() => selectedMode == ''? Toast.show("Please select a redeem mode") : _funRedeemBCoin()}
+              FirstColor={colours.kapraMain}
+              OnPress={() => selectedMode == '' ? Toast.show("Please select a redeem mode") : _funRedeemBCoin()}
               ButtonText={'Redeem Now'}
               ButtonWidth={90}
             />
-          </View> 
+          </View>
         </View>
       </Modal>
 
@@ -326,10 +331,10 @@ export default function GroBCoinScreen({ navigation, route }) {
         <View style={styles.modalMainCon}>
           <View style={styles.updateModalView1}>
             <View style={styles.modalHeader}>
-              <Text style={[styles.fontStyle1,{color: colours.primaryWhite}]} >
+              <Text style={[styles.fontStyle1, { color: colours.primaryWhite }]} >
                 B-Coin Rate History
               </Text>
-              <TouchableOpacity onPress={() => setCoinHistoryModal(false) }>
+              <TouchableOpacity onPress={() => setCoinHistoryModal(false)}>
                 <Text>
                   {showIcon('close', colours.primaryWhite, windowWidth * (7 / 100))}
                 </Text>
@@ -339,23 +344,23 @@ export default function GroBCoinScreen({ navigation, route }) {
               <FlatList
                 data={coinValueHistory}
                 renderItem={({ item, index }) => (
-                  <View style={[styles.coinHistoryCon,{backgroundColor: index%2 == 0?colours.lightPink:colours.kapraLow,}]}>
+                  <View style={[styles.coinHistoryCon, { backgroundColor: index % 2 == 0 ? colours.lightPink : colours.kapraLow, }]}>
                     <Text style={styles.fontStyle1}>{moment(item.updatedOn).format('DD-MM-YYYY,  hh:mm a')}</Text>
                     <Text style={styles.fontStyle1}>₹ {item.bCoinValue}</Text>
                   </View>
                 )}
                 ListEmptyComponent={
                   <View>
-                    <Text/>
-                    <Text/>
-                    <Text/>
+                    <Text />
+                    <Text />
+                    <Text />
                     <Text>No History Found</Text>
                   </View>
                 }
                 keyExtractor={(item, i) => i.toString()}
               />
             </ScrollView>
-          </View> 
+          </View>
         </View>
       </Modal>
     </SafeAreaView>
@@ -369,32 +374,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerCon: {
-    width:windowWidth,
-    height: windowHeight*(8/100),
-    flexDirection:'row',
-    justifyContent:'flex-start',
-    alignItems:'center',
-    paddingHorizontal: windowWidth*(5/100)
+    width: windowWidth,
+    height: windowHeight * (8 / 100),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: windowWidth * (5 / 100)
   },
   backButtonCon: {
-    width: windowWidth*(10/100),
-    height: windowWidth*(10/100),
-    borderRadius: windowWidth*(10/100),
-    alignItems:'center',
-    justifyContent:'center',
+    width: windowWidth * (10 / 100),
+    height: windowWidth * (10 / 100),
+    borderRadius: windowWidth * (10 / 100),
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.3)',
   },
   walletAmountCard: {
-    borderWidth:1,
-    borderRadius:5,
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center',
-    borderStyle:'dashed', 
-    width: windowWidth*(90/100),
-    marginTop: windowHeight*(1/100),
-    paddingVertical: windowHeight*(1/100),
-    paddingHorizontal: windowWidth*(5/100),
+    borderWidth: 1,
+    borderRadius: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderStyle: 'dashed',
+    width: windowWidth * (90 / 100),
+    marginTop: windowHeight * (1 / 100),
+    paddingVertical: windowHeight * (1 / 100),
+    paddingHorizontal: windowWidth * (5 / 100),
     borderColor: colours.kapraBlackLow,
   },
   walletAmountImg: {
@@ -403,31 +408,31 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   iconCon: {
-    width: windowWidth*(5/100),
-    height: windowWidth*(5/100),
-    alignItems:'center',
-    justifyContent:'center',
+    width: windowWidth * (5 / 100),
+    height: windowWidth * (5 / 100),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  switchCon: { 
-    width: windowWidth*(90/100),  
-    flexDirection:'row', 
-    justifyContent:'space-between',
-    marginVertical:10, 
-    backgroundColor: colours.kapraWhite, 
+  switchCon: {
+    width: windowWidth * (90 / 100),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+    backgroundColor: colours.kapraWhite,
   },
   flatlistCon: {
-    width: windowWidth*(90/100),
-    borderWidth:2, 
-    borderRadius:10, 
-    borderColor: colours.kapraWhiteLow, 
-    padding:5, 
-    marginBottom: windowHeight*(20/100)
+    width: windowWidth * (90 / 100),
+    borderWidth: 2,
+    borderRadius: 10,
+    borderColor: colours.kapraWhiteLow,
+    padding: 5,
+    marginBottom: windowHeight * (20 / 100)
   },
   flatlistRowCon: {
-    flexDirection:'row',
-    height: windowHeight*(7/100),
-    alignItems:'center',
-    justifyContent:'space-between',
+    flexDirection: 'row',
+    height: windowHeight * (7 / 100),
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   flatlistRowImgCon: {
     height: windowWidth * (7 / 100),
@@ -436,18 +441,18 @@ const styles = StyleSheet.create({
   },
   coinHistoryCon: {
     flexDirection: 'row',
-    width:windowWidth*(90/100),
-    justifyContent:'space-between',
-    paddingHorizontal:windowWidth*(5/100),
-    paddingVertical: windowWidth*(3/100),
-    borderRadius:5,
-    marginTop:5,
+    width: windowWidth * (90 / 100),
+    justifyContent: 'space-between',
+    paddingHorizontal: windowWidth * (5 / 100),
+    paddingVertical: windowWidth * (3 / 100),
+    borderRadius: 5,
+    marginTop: 5,
   },
 
 
   modalMainCon: {
-    width:windowWidth, 
-    height: windowHeight, 
+    width: windowWidth,
+    height: windowHeight,
     backgroundColor: 'rgba(100, 100, 100,0.3)'
   },
   updateModalView1: {
@@ -459,18 +464,18 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     elevation: 10,
     alignItems: "center",
-    justifyContent:'space-between'
+    justifyContent: 'space-between'
   },
   modalHeader: {
-    width: windowWidth, 
-    height: windowHeight*(7/100), 
-    backgroundColor: colours.kapraMain, 
-    borderTopLeftRadius: 20, 
-    borderTopRightRadius:20,
-    paddingHorizontal: windowWidth*(3/100), 
-    alignItems:'center', 
-    flexDirection:'row', 
-    justifyContent:'space-between'  
+    width: windowWidth,
+    height: windowHeight * (7 / 100),
+    backgroundColor: colours.kapraMain,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: windowWidth * (3 / 100),
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
 
 
@@ -495,7 +500,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Lexend-SemiBold',
     fontSize: getFontontSize(12),
     color: colours.primaryBlack,
-    width: windowWidth*(20/100),
+    width: windowWidth * (20 / 100),
     textAlign: 'center',
     paddingTop: '3%',
     paddingBottom: '3%',

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -25,7 +25,7 @@ import { Badge } from 'react-native-elements';
 import SkeletonPlaceholder from "react-native-skeleton-placeholder";
 import ImageColors from "react-native-image-colors";
 import moment from 'moment';
-import { CommonActions } from '@react-navigation/native';
+import { CommonActions, useFocusEffect } from '@react-navigation/native';
 import { BlurView } from "@react-native-community/blur";
 
 import { AppContext } from '../../Context/appContext';
@@ -54,13 +54,17 @@ import {
   getBCoin,
   getOrderListWithPagination,
   postReOrder,
+  getAvailableLocations,
 } from '../api';
+import { Picker } from '@react-native-picker/picker';
+import DropDownPicker from 'react-native-dropdown-picker';
+import LocationDropdown from '../components/LocationDropdown';
 
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
-const GroHomeScreen = ({ navigation }) => {
+const GroHomeScreen = ({ navigation, route }) => {
   const { profile, GroWishCount, editPincode, GroCartList, GroUpdateCart } = React.useContext(AppContext);
   const { showLoader, loading } = React.useContext(LoaderContext);
 
@@ -82,11 +86,148 @@ const GroHomeScreen = ({ navigation }) => {
   const [noStoreMsg, setNoStoteMsg] = React.useState('');
   const [dummy, setDummy] = React.useState(false);
   const [headerShow, setHeaderShow] = React.useState(true);
-
+  const [showAvailableLocations, setShowAvailableLocations] = React.useState(false);
+  const [availableLocations, setAvailableLocations] = React.useState([]);
   const [orderHistory, setOrderHistory] = React.useState(null)
+  const [open, setOpen] = useState(false);
+  const [selectedLocationValue, setSelectedLocationValue] = useState(null);
+  const [dropdownItems, setDropdownItems] = useState([]);
+  const [locationNotFetched, setLocationNotFetched] = useState(false);
 
+  useEffect(() => {
+    if (!profile?.pinAddress) return;
+
+    Toast.show(`Delivery location changed to ${profile.pinAddress}`);
+  }, [profile?.pinAddress]);
+
+  useEffect(() => {
+    const flag = route?.params?.locationNotFetched;
+    setLocationNotFetched(flag);
+  }, [route?.params]);
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        showLoader(true)
+        const res = await getAvailableLocations();
+        // console.log("ressss", res.data)
+        const locations = res.data.Data || [];
+        setAvailableLocations(locations);
+      } catch (error) {
+        console.error('Error fetching locations:', error?.status || error?.message);
+      } finally {
+        showLoader(false)
+      }
+    };
+
+    if (showAvailableLocations || locationNotFetched) {
+      fetchLocations();
+    }
+  }, [showAvailableLocations, locationNotFetched]);
+  // console.log('availableLocations', availableLocations)
+
+  useEffect(() => {
+    if (selectedLocationValue) {
+      handleLocationSelect(selectedLocationValue);
+    }
+  }, [selectedLocationValue]);
+
+  const handleLocationSelect = async (locationValue) => {
+    if (!locationValue) return;
+
+    try {
+      const selected = availableLocations.find(loc =>
+        loc.pincodeAreaId === locationValue
+      );
+
+      if (selected) {
+        showLoader(true);
+
+        const pincodeData = {
+          area: selected.areaName,
+          pincodeId: selected.pincodeAreaId,
+        };
+
+        await editPincode(pincodeData);
+        await _fetchHomeDataNew();
+
+        // Toast.show(`Delivery location changed to ${selected.areaName}`);
+        showLoader(false);
+      }
+    } catch (error) {
+      showLoader(false);
+      Toast.show('Failed to change delivery location');
+      console.error('Error changing location:', error);
+    }
+  };
+
+  // const LocationDropdown = ({ locations }) => {
+  //   if (!locations || locations.length === 0) {
+  //     return (
+  //       <View style={styles.noLocationContainer}>
+  //         <Text style={[styles.fontStyle2, { textAlign: 'center', color: colours.primaryGrey }]}>
+  //           No locations available
+  //         </Text>
+  //       </View>
+  //     );
+  //   }
+
+  //   return (
+  //     <View style={styles.dropdownWrapper}>
+  //       <Text style={[styles.dropdownLabel, { textAlign: 'center' }]}>
+  //         Select an available location:
+  //       </Text>
+  //       <View style={styles.dropdownContainer}>
+  //         <DropDownPicker
+  //           open={open}
+  //           value={selectedLocationValue}
+  //           items={dropdownItems}
+  //           setOpen={setOpen}
+  //           setValue={setSelectedLocationValue} // This now properly sets the value
+  //           setItems={setDropdownItems}
+  //           placeholder="Choose a location..."
+  //           style={styles.dropdown}
+  //           dropDownContainerStyle={styles.dropdownList}
+  //           textStyle={styles.dropdownText}
+  //           placeholderStyle={styles.placeholderText}
+  //           arrowIconStyle={styles.arrowIcon}
+  //           tickIconStyle={styles.tickIcon}
+  //           listItemLabelStyle={styles.listItemLabel}
+  //           onSelectItem={(item) => {
+  //             // This is called when an item is selected
+  //             // console.log('Selected item:', item);
+  //           }}
+  //           onChangeValue={(value) => {
+  //             // This will be called when value changes
+  //             // console.log('Changed value:', value);
+  //           }}
+  //           zIndex={3000}
+  //           zIndexInverse={1000}
+  //           listMode="MODAL"
+  //           modalProps={{
+  //             animationType: "slide"
+  //           }}
+  //           modalContentContainerStyle={styles.modalContent}
+  //           modalTitle="Select Delivery Location"
+  //           modalTitleStyle={styles.modalTitle}
+  //         />
+  //       </View>
+
+  //       {/* Show currently selected location */}
+  //       {/* {selectedLocationValue && (
+  //         <View style={styles.selectedLocationInfo}>
+  //           <Text style={styles.selectedLocationText}>
+  //             Selected: {availableLocations.find(loc => loc.pincodeAreaId === selectedLocationValue)?.areaName}
+  //           </Text>
+  //         </View>
+  //       )} */}
+  //     </View>
+  //   );
+  // };
 
   const _fetchHomeData = async () => {
+    // console.log("1111111")
+    // setLocationNotFetched(false)
     setData(null);
     setLatestArrivalData(null)
     let res = await getPolicies();
@@ -102,6 +243,79 @@ const GroHomeScreen = ({ navigation }) => {
     }
     if (res) {
       // console.log("222")
+      if (res?.find(obj => obj?.stName == 'showAvailableLocations').stValue === '1') {
+        setShowAvailableLocations(true);
+      }
+      setNoStoteMsg(res.find(obj => obj.stName == 'deliveryUnavailableMsg').stValue)
+      // const newStoreCloseImg = res.find(obj => obj.stName === 'newStoreCloseImage');
+      // setStoreCloseImg(newStoreCloseImg?.stValue || '');
+      setStoreCloseImg(res.find(obj => obj.stName == 'newStoreCloseImage').stValue)
+      setDummy(!dummy)
+    }
+    if (res && res?.find(obj => obj?.stName == 'leadgeneration').stValue == '0') {
+      // console.log("333")
+      let iop = await AsyncStorage.getItem('isOpenedBefore');
+      if (iop === 'true') {
+        await latestArrivalDatas();
+        fetchHomeBannersData();
+        categoryListData();
+        featuredProductsData();
+        popularProductData();
+        recommendedProductsData();
+        recentProductsData();
+        brandOffers();
+        getTopDeals();
+        _fetchOrderData()
+        fetchBCoinData()
+        setTimeout(AppUpdateCheck, 6000);
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: 'GroLeadGenScreen',
+            }
+          ],
+        })
+      }
+    } else {
+      // console.log("44444")
+      await latestArrivalDatas();
+      fetchHomeBannersData();
+      categoryListData();
+      featuredProductsData();
+      popularProductData();
+      recommendedProductsData();
+      recentProductsData();
+      brandOffers();
+      getTopDeals();
+
+      setTimeout(AppUpdateCheck, 6000);
+    }
+
+  };
+
+  const _fetchHomeDataNew = async () => {
+    // console.log("1111111")
+    setLocationNotFetched(false)
+    setData(null);
+    setLatestArrivalData(null)
+    let res = await getPolicies();
+    // console.log("res.dat", res)
+    if (res && res?.find(obj => obj?.stName == 'isStoreOpenInArea').stValue !== '1') {
+      // console.log("111")
+      setStoreCloseModalVisible(true);
+      setStoreCloseMsg(res.find(obj => obj.stName == 'newStoreCloseMsg').stValue)
+      // const newStoreCloseMsg = res.find(obj => obj.stName == 'newStoreCloseMsg');
+      // setStoreCloseMsg(newStoreCloseMsg?.stValue || '');
+      setDummy(!dummy)
+      // return
+    }
+    if (res) {
+      // console.log("222")
+      if (res?.find(obj => obj?.stName == 'showAvailableLocations').stValue === '1') {
+        setShowAvailableLocations(true);
+      }
       setNoStoteMsg(res.find(obj => obj.stName == 'deliveryUnavailableMsg').stValue)
       // const newStoreCloseImg = res.find(obj => obj.stName === 'newStoreCloseImage');
       // setStoreCloseImg(newStoreCloseImg?.stValue || '');
@@ -265,10 +479,11 @@ const GroHomeScreen = ({ navigation }) => {
   //   }
   // }
 
-
   React.useEffect(() => {
-    _fetchHomeData();
-  }, []);
+    if (!locationNotFetched) {
+      _fetchHomeData();
+    }
+  }, [locationNotFetched]);
 
   let onpress = (item) => {
     if (item.mob_type === 'Category') {
@@ -464,6 +679,8 @@ const GroHomeScreen = ({ navigation }) => {
             </Text>
           </TouchableOpacity>
         </LinearGradient>
+        {/* {console.log('storeCloseImg', storeCloseImg)}
+        {console.log('noStoreMsg', noStoreMsg)} */}
         <Image
           source={{ uri: getImage(storeCloseImg) }}
           style={{
@@ -472,7 +689,14 @@ const GroHomeScreen = ({ navigation }) => {
             marginTop: windowWidth * (20 / 100),
           }}
         />
+        {/* {console.log('showAvailableLocations', showAvailableLocations)} */}
         <Text style={[styles.fontStyle2, { textAlign: 'center', color: colours.primaryBlue }]}>{noStoreMsg}</Text>
+        {showAvailableLocations && (
+          <LocationDropdown
+            locations={availableLocations}
+            onLocationSelect={handleLocationSelect}
+          />
+        )}
         {
           appUpdateData && (
             <Modal
@@ -514,6 +738,143 @@ const GroHomeScreen = ({ navigation }) => {
             </Modal>
           )
         }
+      </SafeAreaView>
+    )
+  }
+
+  if (locationNotFetched) {
+    return (
+      <SafeAreaView style={styles.mainContainer}>
+        <LinearGradient
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          colors={[colours.kapraOrangeLight, colours.kapraWhite]}
+          style={{ width: windowWidth, alignItems: 'center' }}
+        >
+          {/* Switch Con  */}
+          <View style={styles.appSwitchCon}>
+            <AuthButton
+              FirstColor={colours.kapraOrangeDark}
+              SecondColor={colours.kapraOrange}
+              OnPress={() => null}
+              ButtonText={'K GROCERY'}
+              ButtonWidth={44}
+              ButtonHeight={5}
+              Font2
+            />
+            <AuthButton
+              FirstColor={colours.kapraWhite}
+              SecondColor={colours.kapraWhite}
+              FColor={colours.kapraOrange}
+              OnPress={async () => {
+                await AsyncStorage.setItem('currentApp', 'BUYERZ'),
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'BuyerzHomeScreen' }],
+                  })
+              }
+              }
+              ButtonText={'K SHOPE'}
+              ButtonWidth={44}
+              ButtonHeight={5}
+              Font2
+            />
+          </View>
+
+          {/* Location Con  */}
+          <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
+            <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} />
+            <TouchableOpacity style={styles.searchConBtn}
+              onPress={() => profile.groceryCustId ? navigation.navigate('GroReferralScreen') : Toast.show('Please Login!')}>
+              {showIcon('share', colours.primaryWhite, windowWidth * (6 / 100))}
+            </TouchableOpacity>
+            {profile.isPrime !== true ? (<TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
+              {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
+
+              {GroWishCount > 0 && (
+                <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
+              )}
+            </TouchableOpacity>
+            ) : (<Image
+              source={require('../../assets/images/primebadge.png')}
+              style={{
+                height: windowWidth * (16 / 100),
+                width: windowWidth * (16 / 100),
+                // resizeMode: 'contain',
+              }} />
+            )}
+
+          </View>
+
+          {/* Search Con  */}
+          <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate('GroSearchModalScreen')}>
+            <View>{showIcon('search', colours.kapraBlackLow, windowWidth * (5 / 100))}</View>
+            <Text style={styles.searchFont}>
+              {'  '}Search products
+            </Text>
+          </TouchableOpacity>
+        </LinearGradient>
+        <Image
+          source={{ uri: getImage('assets/images/yoga.png') }}
+          style={{
+            width: windowWidth * (80 / 100),
+            height: windowWidth * (80 / 100),
+            marginTop: windowWidth * (20 / 100),
+          }}
+        />
+        {/* {console.log('showAvailableLocations', showAvailableLocations)} */}
+        <Text style={[styles.fontStyle2, { textAlign: 'center', color: colours.primaryBlue }]}>Looks like we aren't here yet. We will deliver here soon! Please try another location for now</Text>
+        {/* {showAvailableLocations && (
+          <LocationDropdown
+            locations={availableLocations}
+            onLocationSelect={handleLocationSelect}
+          />
+        )} */}
+        <LocationDropdown
+          locations={availableLocations}
+          onLocationSelect={handleLocationSelect}
+        />
+        {/* {
+          appUpdateData && (
+            <Modal
+              animationType="slide"
+              visible={updateModalVisible}
+              transparent={true}
+            >
+              <View style={{ width: windowWidth, height: windowHeight, backgroundColor: 'rgba(100, 100, 100,0.3)' }}>
+                <View style={styles.updateModalView1}>
+                  <Image
+                    source={require('../../assets/logo/logo.png')}
+                    style={{
+                      height: windowWidth * (20 / 100),
+                      width: windowWidth * (80 / 100),
+                      resizeMode: 'contain',
+                    }}
+                  />
+                  <Text style={styles.headerText}>New version {appUpdateData.versionCode} available. Please update</Text>
+                  <View style={{ flexDirection: 'row', width: windowWidth * (90 / 100), justifyContent: 'space-around' }}>
+                    {
+                      appUpdateData && appUpdateData.isCompulsory == false && (
+                        <AuthButton
+                          BackgroundColor={colours.primaryRed}
+                          OnPress={() => { setUpdateModalVisible(false) }}
+                          ButtonText={'Cancel'}
+                          ButtonWidth={40}
+                        />
+                      )
+                    }
+                    <AuthButton
+                      BackgroundColor={colours.primaryColor}
+                      OnPress={() => { appUpdateData.app_url != "" ? Linking.openURL(appUpdateData.redirectUrl) : null, setUpdateModalVisible(false) }}
+                      ButtonText={'Update'}
+                      ButtonWidth={40}
+                    />
+                  </View>
+                </View>
+              </View>
+            </Modal>
+          )
+        } */}
       </SafeAreaView>
     )
   }
@@ -1892,6 +2253,73 @@ const styles = StyleSheet.create({
     fontSize: getFontontSize(8),
     color: colours.kapraBlack,
     textAlign: 'center'
+  },
+  locationDropdownWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  dropdownWrapper: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  dropdownContainer: {
+    width: '95%',
+    zIndex: 3000,
+    marginTop: 5,
+  },
+  dropdown: {
+    backgroundColor: colours.primaryWhite,
+    borderColor: colours.kapraOrange,
+    borderWidth: 1,
+    borderRadius: 8,
+  },
+  dropdownList: {
+    backgroundColor: colours.primaryWhite,
+    borderColor: colours.kapraOrange,
+    borderWidth: 1,
+    borderRadius: 8,
+    marginTop: 2,
+  },
+  dropdownText: {
+    fontSize: getFontontSize(14),
+    color: colours.primaryBlack,
+    fontFamily: 'Lexend-Regular',
+  },
+  placeholderText: {
+    fontSize: getFontontSize(14),
+    color: colours.kapraBlackLight,
+    fontFamily: 'Lexend-Regular',
+  },
+  arrowIcon: {
+    tintColor: colours.kapraOrange,
+  },
+  tickIcon: {
+    tintColor: colours.kapraOrange,
+  },
+  noLocationContainer: {
+    width: '100%',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  dropdownLabel: {
+    fontFamily: 'Lexend-Regular',
+    fontSize: getFontontSize(14),
+    color: colours.primaryBlack,
+    marginVertical: 5,
+  },
+  listItemLabel: {
+    fontSize: getFontontSize(14),
+    color: colours.primaryBlack,
+    fontFamily: 'Lexend-Regular',
+  },
+  modalContent: {
+    backgroundColor: colours.primaryWhite,
+  },
+  modalTitle: {
+    fontFamily: 'Lexend-SemiBold',
+    fontSize: getFontontSize(16),
+    color: colours.primaryBlack,
   },
 });
 
