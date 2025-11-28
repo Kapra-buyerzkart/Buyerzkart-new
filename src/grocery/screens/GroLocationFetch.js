@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Text, StyleSheet, Dimensions, PermissionsAndroid, Platform, SafeAreaView, Modal, KeyboardAvoidingView, TouchableOpacity, ScrollView, FlatList, Alert, Linking, AppState } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 import LottieView from 'lottie-react-native';
@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { check, request, PERMISSIONS, RESULTS, openSettings } from 'react-native-permissions';
 import DeviceInfo from 'react-native-device-info';
 import Toast from 'react-native-simple-toast';
+import { useFocusEffect } from '@react-navigation/native';
 
 // import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 
@@ -35,6 +36,8 @@ const GroLocationFetch = ({ navigation }) => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [dummy, setDummy] = useState(false);
   const [locationNotFetched, setLocationNotFetched] = useState(false);
+  const [appActive, setAppActive] = useState(false);
+  const [askedOnce, setAskedOnce] = useState(false);
 
   const [region, setRegion] = useState({
     latitude: 10.0224066,
@@ -48,20 +51,44 @@ const GroLocationFetch = ({ navigation }) => {
   const timeoutRef = useRef(null); // 🕐 Store timer reference
 
   useEffect(() => {
-    // if (Platform.OS === 'android') {
-    //   requestLocationPermission();
-    // } else {
-    //   fetchLocation();
-    // }
-    checkLocationServicesAndPermission();
+    if (Platform.OS === 'android') {
 
-    // 🕒 Start 10-sec fallback timer
+      // Ask permission ONLY if not asked before
+      if (!askedOnce) {
+        setAskedOnce(true);
+        requestLocationPermission();
+      } else {
+        // If permission already asked once → do NOT request again
+        // But DO NOT fetch location if permission is denied
+        PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        ).then(isGranted => {
+          if (isGranted) {
+            fetchLocation();
+          }
+        });
+      }
+
+    } else {
+      fetchLocation();
+    }
+
     startAutoNavigateTimer();
 
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, []);
+  }, [askedOnce]);
+
+  // useEffect(() => {
+  //   const subscription = AppState.addEventListener('change', nextState => {
+  //     if (nextState === 'active') {
+  //       setAppActive(prev => !prev);   // 🔥 toggle state → forces re-run of useEffect
+  //     }
+  //   });
+
+  //   return () => subscription.remove();
+  // }, []);
 
   const openLocationSettings = () => {
     if (Platform.OS !== 'android') return;
@@ -130,22 +157,65 @@ const GroLocationFetch = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const subscription = AppState.addEventListener(
-      'change',
-      async nextState => {
-        if (nextState === 'active') {
-          // User returned from settings
-          const gpsEnabled = await DeviceInfo.isLocationEnabled();
-
-          if (gpsEnabled) {
-            fetchLocation();       // 🔥 Fetch again automatically
+    const subscription = AppState.addEventListener('change', async nextState => {
+      if (nextState === 'active') {
+        // console.log("222222")
+        const gpsEnabled = await DeviceInfo.isLocationEnabled();
+        const permission = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        // console.log('gpsEnabled', gpsEnabled)
+        // console.log('permission', permission)
+        if (Platform.OS === "ios"){
+          if (gpsEnabled){
+            // console.log("333333")
+            fetchLocation();
           }
         }
+        if (permission && gpsEnabled) {
+          fetchLocation();
+        }
       }
-    );
+    });
 
     return () => subscription.remove();
   }, []);
+
+  // useEffect(() => {
+  //   const subscription = AppState.addEventListener('change', async nextState => {
+  //     if (nextState === 'active') {
+
+  //       // Check location permission
+  //       const permissionGranted = await PermissionsAndroid.check(
+  //         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+  //       );
+
+  //       if (!permissionGranted) {
+  //         return; // user still didn't allow permission
+  //       }
+
+  //       // 🔥 Check GPS every time user returns from Settings
+  //       const gpsEnabled = await DeviceInfo.isLocationEnabled();
+  //       console.log('gpsEnabled', gpsEnabled)
+  //       if (!gpsEnabled) {
+  //         Alert.alert(
+  //           'GPS is Off',
+  //           'Please enable GPS/location services to continue.',
+  //           [
+  //             { text: 'Open Location Settings', onPress: () => openLocationSettings() }
+  //           ]
+  //         );
+  //         return;
+  //       }
+
+  //       // If both are OK -> fetch location
+  //       fetchLocation();
+  //     }
+  //   });
+
+  //   return () => subscription.remove();
+  // }, []);
+
 
   const startAutoNavigateTimer = () => {
     timeoutRef.current = setTimeout(() => {
@@ -175,22 +245,76 @@ const GroLocationFetch = ({ navigation }) => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
   };
 
+  // const requestLocationPermission = async () => {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+  //       {
+  //         title: 'Location Access Required',
+  //         message: 'This app needs to access your location',
+  //       }
+  //     );
+  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //       fetchLocation();
+  //     } else {
+  //       Alert.alert('Location Permission Denied');
+  //     }
+  //   } catch (err) { }
+  // };
+
   const requestLocationPermission = async () => {
     try {
-      const granted = await PermissionsAndroid.request(
+      // First ask permission
+      await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
         {
           title: 'Location Access Required',
           message: 'This app needs to access your location',
         }
       );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        fetchLocation();
-      } else {
-        Alert.alert('Location Permission Denied');
+
+      // 🔥 Now check the REAL final status (important!)
+      const isGranted = await PermissionsAndroid.check(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+      );
+
+      // ----------------- ⛔ USER DENIED -----------------
+      if (!isGranted) {
+        Alert.alert(
+          'Location Permission Required',
+          'Please enable location permission for the app to function properly.',
+          [
+            { text: 'Open Settings', onPress: () => openSettings() },
+            { text: 'Cancel', style: 'cancel' }
+          ]
+        );
+        return;
       }
-    } catch (err) { }
+
+      // ----------------- 🔥 PERMISSION GRANTED -----------------
+      const gpsEnabled = await DeviceInfo.isLocationEnabled();
+
+      if (!gpsEnabled) {
+        Alert.alert(
+          'Location Services Off',
+          'Please enable GPS/location services to continue.',
+          [
+            {
+              text: 'Open Location Settings',
+              onPress: () => openLocationSettings(),
+            }
+          ]
+        );
+        return;
+      }
+
+      fetchLocation();
+
+    } catch (err) {
+      console.log(err);
+    }
   };
+
 
   const fetchLocation = () => {
     setLoading(true);
