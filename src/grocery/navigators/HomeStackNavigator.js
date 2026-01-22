@@ -42,6 +42,7 @@ import GroLocationFetch from '../screens/GroLocationFetch';
 import TestScreen from '../screens/TestScreen';
 
 import GroMyTabs from './TabNavigator';
+import GroLocationFetchNew from '../screens/GroLocationFetchNew';
 
 const Stack = createStackNavigator();
 
@@ -50,7 +51,7 @@ export default function HomeStackNavigator() {
   return (
     <Stack.Navigator 
       screenOptions={{ headerShown: false }}
-      initialRouteName={'GroLocationFetch'}
+      initialRouteName={'GroLocationFetchNew'}
       // initialRouteName={'GroHomeScreen'}
     >
       <Stack.Screen name="GroHomeScreen" component={GroMyTabs} />
@@ -88,6 +89,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="GroAddAddressMapScreen" component={GroAddAddressMapScreen} />
       <Stack.Screen name="GroLeadGenScreen" component={GroLeadGenScreen} />
       <Stack.Screen name="GroLocationFetch" component={GroLocationFetch} />
+      <Stack.Screen name="GroLocationFetchNew" component={GroLocationFetchNew} />
 
 
 

@@ -20,11 +20,8 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-
-	<!-- MERGED URL TYPES -->
 	<key>CFBundleURLTypes</key>
 	<array>
-		<!-- App Custom Scheme -->
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -35,16 +32,12 @@
 				<string>buyerzkart</string>
 			</array>
 		</dict>
-
-		<!-- OneSignal Scheme -->
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>onesignal2818a3b482432468a3feb7a10e3fb837</string>
 			</array>
 		</dict>
-
-		<!-- Facebook Login Scheme -->
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
@@ -52,37 +45,26 @@
 			</array>
 		</dict>
 	</array>
-
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
 	<key>NSAppTransportSecurity</key>
 	<dict/>
-
 	<key>NSContactsUsageDescription</key>
 	<string>Your contacts access needed to activate "refer a friend" option.</string>
-
 	<key>NSLocationUsageDescription</key>
 	<string>Your location is used to locate delivery address by our delivery executives.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location is used to locate delivery address by our delivery executives.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location is used to locate delivery address by our delivery executives.</string>
-	<!-- <key>NSLocationAlwaysUsageDescription</key>
-	<string>Your location is used to locate delivery address by our delivery executives.</string> -->
-
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to your photo library to select and upload images.</string>
-
-	<!-- Facebook -->
 	<key>FacebookAppID</key>
 	<string>1763796204222338</string>
 	<key>FacebookDisplayName</key>
 	<string>Kapra</string>
-
-	<!-- Facebook Query Schemes -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbapi</string>
@@ -90,7 +72,6 @@
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
 	</array>
-
 	<key>UIAppFonts</key>
 	<array>
 		<string>Proxima Nova Alt Bold.otf</string>
@@ -128,28 +109,25 @@
 		<string>Lexend-Regular.ttf</string>
 		<string>Lexend-SemiBold.ttf</string>
 		<string>Lexend-Thin.ttf</string>
+		<string>Poppins-Light.ttf</string>
+		<string>Poppins-ExtraBold.ttf</string>
 	</array>
-
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
-
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
 	</array>
-
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 		<string>UIInterfaceOrientationPortrait</string>
 	</array>
-
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 </dict>

@@ -1070,6 +1070,7 @@ const GroHomeScreen = ({ navigation, route }) => {
             autoplayInterval={4000}
             enableMomentum={true}
           />
+          {/* {console.log("PPPPPPP", profile)} */}
           {/* {console.log('profile', profile)} */}
           <View style={{ position: 'absolute', width: windowWidth, alignItems: 'center' }}>
 
