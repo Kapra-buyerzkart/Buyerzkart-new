@@ -28,7 +28,7 @@ const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const GroLocationFetchNew = ({ navigation }) => {
-    const { profile, editPincode } = React.useContext(AppContext);
+    const { profile, editPincode, locationNotFetched, setLocationNotFetched } = React.useContext(AppContext);
 
     const [loading, setLoading] = useState(false);
     const [addressComponent, setAddressComponent] = useState(null);
@@ -38,9 +38,10 @@ const GroLocationFetchNew = ({ navigation }) => {
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [showConfirm, setShowConfirm] = useState(false);
     const [dummy, setDummy] = useState(false);
-    const [locationNotFetched, setLocationNotFetched] = useState(false);
+    // const [locationNotFetched, setLocationNotFetched] = useState(false);
     const [appActive, setAppActive] = useState(false);
     const [askedOnce, setAskedOnce] = useState(false);
+    const [manualOverride, setManualOverride] = useState(false);
 
     const [region, setRegion] = useState({
         latitude: 10.0224066,
@@ -52,6 +53,21 @@ const GroLocationFetchNew = ({ navigation }) => {
     const insets = useSafeAreaInsets();
     const userInteractedRef = useRef(false); // 🟢 Track user interaction
     const timeoutRef = useRef(null); // 🕐 Store timer reference
+
+    useEffect(() => {
+        const loadManualOverride = async () => {
+            const savedOverride = await AsyncStorage.getItem('manualOverride');
+            if (savedOverride === 'true') {
+                setManualOverride(true);
+                const savedRegion = await AsyncStorage.getItem('manualRegion');
+                const savedAddress = await AsyncStorage.getItem('manualAddress');
+                if (savedRegion) setRegion(JSON.parse(savedRegion));
+                if (savedAddress) setAddressComponent(JSON.parse(savedAddress));
+            }
+        };
+        loadManualOverride();
+    }, []);
+
 
     useEffect(() => {
         if (Platform.OS === 'android') {
@@ -161,7 +177,7 @@ const GroLocationFetchNew = ({ navigation }) => {
 
     useEffect(() => {
         const subscription = AppState.addEventListener('change', async nextState => {
-            if (nextState === 'active') {
+            if (nextState === 'active' && !manualOverride) {
                 // console.log("222222")
                 const gpsEnabled = await DeviceInfo.isLocationEnabled();
                 const permission = await PermissionsAndroid.check(
@@ -182,7 +198,7 @@ const GroLocationFetchNew = ({ navigation }) => {
         });
 
         return () => subscription.remove();
-    }, []);
+    }, [manualOverride]);
 
     // useEffect(() => {
     //   const subscription = AppState.addEventListener('change', async nextState => {
@@ -223,6 +239,7 @@ const GroLocationFetchNew = ({ navigation }) => {
     const startAutoNavigateTimer = () => {
         timeoutRef.current = setTimeout(() => {
             // Navigate only if user has NOT interacted
+            setLocationNotFetched(false);
             if (!userInteractedRef.current && showConfirm) {
                 navigation.reset({
                     index: 0,
@@ -231,9 +248,9 @@ const GroLocationFetchNew = ({ navigation }) => {
                             name: 'GroHomeScreen',
                             params: {
                                 screen: 'GroHome',
-                                params: {
-                                    locationNotFetched: false,
-                                },
+                                // params: {
+                                //     locationNotFetched: false,
+                                // },
                             },
                         },
                     ],
@@ -370,6 +387,7 @@ const GroLocationFetchNew = ({ navigation }) => {
                     // console.log("2222222")
                     setTimeout(() => {
                         if (!userInteractedRef.current) {
+                            setLocationNotFetched(false);
                             navigation.reset({
                                 index: 0,
                                 routes: [
@@ -377,9 +395,9 @@ const GroLocationFetchNew = ({ navigation }) => {
                                         name: 'GroHomeScreen',
                                         params: {
                                             screen: 'GroHome',
-                                            params: {
-                                                locationNotFetched: false,
-                                            },
+                                            // params: {
+                                            //     locationNotFetched: false,
+                                            // },
                                         },
                                     },
                                 ],
@@ -396,6 +414,7 @@ const GroLocationFetchNew = ({ navigation }) => {
                 await editPincode(area[0]);
                 setTimeout(() => {
                     if (!userInteractedRef.current) {
+                        setLocationNotFetched(false);
                         navigation.reset({
                             index: 0,
                             routes: [
@@ -403,9 +422,9 @@ const GroLocationFetchNew = ({ navigation }) => {
                                     name: 'GroHomeScreen',
                                     params: {
                                         screen: 'GroHome',
-                                        params: {
-                                            locationNotFetched: false,
-                                        },
+                                        // params: {
+                                        //     locationNotFetched: false,
+                                        // },
                                     },
                                 },
                             ],
@@ -429,6 +448,7 @@ const GroLocationFetchNew = ({ navigation }) => {
             await editPincode("")
             setTimeout(() => {
                 if (!userInteractedRef.current) {
+                    setLocationNotFetched(true);
                     navigation.reset({
                         index: 0,
                         routes: [
@@ -436,9 +456,9 @@ const GroLocationFetchNew = ({ navigation }) => {
                                 name: 'GroHomeScreen',
                                 params: {
                                     screen: 'GroHome',
-                                    params: {
-                                        locationNotFetched: true,
-                                    },
+                                    // params: {
+                                    //     locationNotFetched: true,
+                                    // },
                                 },
                             },
                         ],
@@ -473,6 +493,7 @@ const GroLocationFetchNew = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.maninContainer}>
+            {/* {console.log('manualOverride', manualOverride)} */}
             <ImageBackground style={styles.backgroundImage} resizeMode="cover" source={require('../../assets/images/location-background.png')}>
                 <View
                     style={[
@@ -485,6 +506,7 @@ const GroLocationFetchNew = ({ navigation }) => {
                         SecondColor={colours.kapraOrange}
                         OnPress={() => {
                             // stopAutoNavigateTimer();
+                            setLocationNotFetched(false);
                             navigation.reset({
                                 index: 0,
                                 routes: [
@@ -492,9 +514,9 @@ const GroLocationFetchNew = ({ navigation }) => {
                                         name: 'GroHomeScreen',
                                         params: {
                                             screen: 'GroHome',
-                                            params: {
-                                                locationNotFetched: false,
-                                            },
+                                            // params: {
+                                            //     locationNotFetched: false,
+                                            // },
                                         },
                                     },
                                 ],
@@ -559,7 +581,7 @@ const GroLocationFetchNew = ({ navigation }) => {
                     </Text>
                 </View>
                 {showConfirm && (
-                    <AuthButton
+                    <AuthButtonNew
                         FirstColor={colours.kapraOrangeLight}
                         SecondColor={colours.kapraOrange}
                         OnPress={() => {
@@ -603,7 +625,7 @@ const GroLocationFetchNew = ({ navigation }) => {
 
                             <View style={styles.locationSearch2}>
                                 <GooglePlacesAutocomplete
-                                    placeholder={'Search a new address'}
+                                    placeholder={'Search a new location'}
                                     textInputProps={styles.searchTextCon}
                                     styles={styles.searchTextIn}
                                     debounce={200}
@@ -626,7 +648,7 @@ const GroLocationFetchNew = ({ navigation }) => {
                                             </View>
                                         );
                                     }}
-                                    onPress={(data, details = null) => {
+                                    onPress={async (data, details = null) => {
                                         stopAutoNavigateTimer();
                                         setRegion({
                                             latitude: Number(details.geometry.location.lat),
@@ -640,6 +662,10 @@ const GroLocationFetchNew = ({ navigation }) => {
                                             Number(details.geometry.location.lng)
                                         );
                                         setLocationSearchModal(false);
+                                        setManualOverride(true); // Save to AsyncStorage 
+                                        await AsyncStorage.setItem('manualOverride', 'true');
+                                        await AsyncStorage.setItem('manualRegion', JSON.stringify(newRegion));
+                                        await AsyncStorage.setItem('manualAddress', JSON.stringify(details));
                                     }}
                                     query={{
                                         key: 'AIzaSyDhItv0zoWdQbDh-5jjKLAEjwRDDrFNc1Y',
@@ -722,6 +748,7 @@ const GroLocationFetchNew = ({ navigation }) => {
                                         OnPress={() => {
                                             // stopAutoNavigateTimer();
                                             setLocationSelectionModal(false);
+                                            setLocationNotFetched(false);
                                             navigation.reset({
                                                 index: 0,
                                                 routes: [
@@ -729,9 +756,9 @@ const GroLocationFetchNew = ({ navigation }) => {
                                                         name: 'GroHomeScreen',
                                                         params: {
                                                             screen: 'GroHome',
-                                                            params: {
-                                                                locationNotFetched: false,
-                                                            },
+                                                            // params: {
+                                                            //     locationNotFetched: false,
+                                                            // },
                                                         },
                                                     },
                                                 ],
@@ -749,6 +776,7 @@ const GroLocationFetchNew = ({ navigation }) => {
                                             await editPincode(selectedLocation);
                                             setSelectedLocation(null);
                                             setLocationSelectionModal(false);
+                                            setLocationNotFetched(false);
                                             navigation.reset({
                                                 index: 0,
                                                 routes: [
@@ -756,9 +784,9 @@ const GroLocationFetchNew = ({ navigation }) => {
                                                         name: 'GroHomeScreen',
                                                         params: {
                                                             screen: 'GroHome',
-                                                            params: {
-                                                                locationNotFetched: false,
-                                                            },
+                                                            // params: {
+                                                            //     locationNotFetched: false,
+                                                            // },
                                                         },
                                                     },
                                                 ],

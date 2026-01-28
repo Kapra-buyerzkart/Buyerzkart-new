@@ -81,6 +81,7 @@ const PincodeChange = ({fun = () => {}, Width}) => {
         </View>
         <Text
           numberOfLines={1}
+          ellipsizeMode="tail"
           style={[styles.pincodeText1, {width: Width? windowWidth*((Width-15)/100):  windowWidth * (75 / 100)}]}>
           <Text style={styles.pincodeText2} >Delivery to </Text>
           {profile.pinAddress}

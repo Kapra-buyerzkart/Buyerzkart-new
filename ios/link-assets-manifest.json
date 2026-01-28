@@ -18,8 +18,16 @@
       "sha1": "8e980f76a35675acd586f829dd2ae8d002dd97d6"
     },
     {
+      "path": "src/assets/fonts/Outfit-Bold.ttf",
+      "sha1": "148c9a4f145442e85509a202472f3dfc002f2359"
+    },
+    {
       "path": "src/assets/fonts/Montserrat-Medium.ttf",
       "sha1": "6b57d12e018c64352e202f8ef3bf7f431f76d935"
+    },
+    {
+      "path": "src/assets/fonts/Outfit-Regular.ttf",
+      "sha1": "06a8de7221f96cdce3e90e32444f1db7897b479a"
     },
     {
       "path": "src/assets/fonts/FontAwesome5Free-Solid.otf",
@@ -30,8 +38,16 @@
       "sha1": "2a080dd36278ff2755d5976317cbeeecbcf6cc62"
     },
     {
+      "path": "src/assets/fonts/Italiana-Regular.ttf",
+      "sha1": "e10f8b2b90e4e72c4f4fc2e7ddff58198756100d"
+    },
+    {
       "path": "src/assets/fonts/Lexend-Black.ttf",
       "sha1": "d5cb18ad3ffeeed68c3753396450935fc5ecbeb2"
+    },
+    {
+      "path": "src/assets/fonts/Outfit-SemiBold.ttf",
+      "sha1": "187a51467f6faeab3853f62a38c729817a938bc0"
     },
     {
       "path": "src/assets/fonts/Proxima Nova Alt Bold.otf",
@@ -42,6 +58,10 @@
       "sha1": "e247a92158e112f8bf7b638c8d95381d66b00dbb"
     },
     {
+      "path": "src/assets/fonts/Poppins-Medium.ttf",
+      "sha1": "283f21b44efbdbf276ba802be2d949a36bbc4233"
+    },
+    {
       "path": "src/assets/fonts/Lexend-ExtraBold.ttf",
       "sha1": "b4eb65e2f16d6614bde3f7d9d0bb09742ff47163"
     },
@@ -50,8 +70,16 @@
       "sha1": "ed5e533b6571e33adb6d01298cb8d1a5a2466657"
     },
     {
+      "path": "src/assets/fonts/Inter_18pt-ExtraBold.ttf",
+      "sha1": "d01b4a9a01dfdb6d9a5c6ec153d528d70706d885"
+    },
+    {
       "path": "src/assets/fonts/Montserrat-Light.ttf",
       "sha1": "6f21894a80049259ef71fcba135218695b41b67a"
+    },
+    {
+      "path": "src/assets/fonts/Inter_18pt-BoldItalic.ttf",
+      "sha1": "070da88186139923731769aa07d7eaf6d5dc32ee"
     },
     {
       "path": "src/assets/fonts/Montserrat-ThinItalic.ttf",
@@ -86,6 +114,10 @@
       "sha1": "4b5c0750f073abd576413a0898d3b95adaf199c8"
     },
     {
+      "path": "src/assets/fonts/Outfit-Medium.ttf",
+      "sha1": "9d7db2e6a458135b81b68078a7f4863fa17c2024"
+    },
+    {
       "path": "src/assets/fonts/Proxima Nova Alt Light.otf",
       "sha1": "813f4df23bb5c7a45f886bac87744086c72baf2c"
     },
@@ -94,12 +126,20 @@
       "sha1": "8580dec824bbdb6ce24d04d3aaf360776339f0a7"
     },
     {
+      "path": "src/assets/fonts/Inter_28pt-ExtraBold.ttf",
+      "sha1": "0f4e77952476d538c57dc3cff12926581f82c3a8"
+    },
+    {
       "path": "src/assets/fonts/Montserrat-ExtraLightItalic.ttf",
       "sha1": "fbbb972b616c3b84d99976ddf84b6fecdeb4c7ca"
     },
     {
       "path": "src/assets/fonts/Montserrat-ExtraBold.ttf",
       "sha1": "1914bc1981e6ceceadb2f6d72455b4e89e04965c"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Regular.ttf",
+      "sha1": "fdd3002e7d814ee47c1c1b8487c72c6bbb3a2d00"
     },
     {
       "path": "src/assets/fonts/Montserrat-Black.ttf",
@@ -122,6 +162,10 @@
       "sha1": "7ee28022da7fcd1f0adcfe7c2d73650c59d5c1fc"
     },
     {
+      "path": "src/assets/fonts/Outfit-Light.ttf",
+      "sha1": "22de7012df58897c09b4d31b963d317293237c1e"
+    },
+    {
       "path": "src/assets/fonts/Montserrat-Regular.ttf",
       "sha1": "de57aa03e4821fdbe6c34ec2c895e8b5c914e837"
     },
@@ -130,8 +174,24 @@
       "sha1": "4ee8f07c7414009645d03d87cd72df15658fe9f4"
     },
     {
+      "path": "src/assets/fonts/Poppins-Bold.ttf",
+      "sha1": "875cf0cecd647bcf22e79d633d868c1b1ec98dfa"
+    },
+    {
+      "path": "src/assets/fonts/Inter_18pt-Regular.ttf",
+      "sha1": "bd1976c1f019853ab6143ef1246e25aa66fd990e"
+    },
+    {
       "path": "src/assets/fonts/FontAwesome5FreeRegular.otf",
       "sha1": "7a7e91d69f59903cc4761d72e3212b5cad27c210"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-SemiBold.ttf",
+      "sha1": "8a4ace9392d06bcb7f8ea2f5169b07e4c383a90d"
+    },
+    {
+      "path": "src/assets/fonts/Poppins-Italic.ttf",
+      "sha1": "e2bfcd56016c3c915221ef1c5fc1a17b0776eb91"
     },
     {
       "path": "src/assets/fonts/Lexend-Medium.ttf",

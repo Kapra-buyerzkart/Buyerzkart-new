@@ -1,4 +1,4 @@
-import { get, post, put, postRegister, getNew } from './networkUtils';
+import { get, post, put, postRegister, getNew, postNew } from './networkUtils';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from 'axios';
@@ -819,3 +819,47 @@ export const getAvailableLocations = async () => {
   const URL = `getAvailablePincodeArea`;
   return await getNew(URL);
 };
+
+export const checkPhone = async (phoneNo) => {
+  const URL = `Auth/checkphone`;
+  // console.log("URL", URL)
+  let res = await postNew(URL, {
+    phone: phoneNo
+  });
+  // console.log('res', res)
+  return res;
+};
+
+export const sendLoginOtp = async (phoneNo) => {
+  const URL = `Auth/sendloginotp`;
+  // console.log("URL", URL)
+  let res = await postNew(URL, {
+    phone: phoneNo
+  });
+  // console.log('res', res)
+  return res;
+};
+
+export const verifyLoginOtp = async (phoneNo, otp) => {
+  const URL = `Auth/verifyloginotp`;
+  // console.log("URL", URL)
+  let res = await postNew(URL, {
+    phone: phoneNo,
+    otp: otp
+  });
+  // console.log('res', res)
+  return res;
+};
+
+export const reSendLoginOtp = async (phoneNo) => {
+  const URL = `Auth/resendloginotp`;
+  // console.log("URL", URL)
+  let res = await postNew(URL, {
+    phone: phoneNo
+  });
+  // console.log('res', res)
+  return res;
+};
+
+
+

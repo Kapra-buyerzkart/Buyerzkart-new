@@ -19,7 +19,8 @@ import {
   GroMergeOnLogin,
   groLoginUser,
   GroUpdateProfile,
-  GroVerifyRefOTP
+  GroVerifyRefOTP,
+  verifyLoginOtp
 } from '../grocery/api'
 import OneSignal from 'react-native-onesignal';
 
@@ -38,6 +39,7 @@ export const AppContextProvider = ({ children }) => {
   const [GroCartList, setGroCartList] = useState([]);
   const [GroWishListData, setGroWishListData] = useState([]);
   const [GroWishCount, setGroWishCount] = useState(0);
+  const [locationNotFetched, setLocationNotFetched] = useState(false)
 
   const loadProfile = async () => {
     let prof = await AsyncStorage.getItem('profile');
@@ -72,7 +74,7 @@ export const AppContextProvider = ({ children }) => {
   }
 
   const GroUpdateCart = async (ProductID) => {
-    let res = await GroGetCartList(0,'');
+    let res = await GroGetCartList(0, '');
     if (res?.cartList?.length > 0) {
       let a = {};
       res.cartList.map((item, i) => {
@@ -189,7 +191,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const editPincode = async (item) => {
-    
+
     let prof = await AsyncStorage.getItem('profile');
     // console.log("1111")
     profile.pincode = item?.pincodeId;
@@ -204,7 +206,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const register = async (OTP, urlkey, details, Ref) => {
-    let res = await verifyOTP(OTP, urlkey,Ref);
+    let res = await verifyOTP(OTP, urlkey, Ref);
     let prof = JSON.parse(await AsyncStorage.getItem('profile'));
     let obj = {
       ...prof,
@@ -220,7 +222,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const GroRegister = async (OTP, urlkey, details, Ref) => {
-    let res = await GroVerifyOTP(OTP, urlkey,Ref);
+    let res = await GroVerifyOTP(OTP, urlkey, Ref);
     let prof = JSON.parse(await AsyncStorage.getItem('profile'));
     let obj = {
       ...prof,
@@ -236,7 +238,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const refRegister = async (OTP, urlkey, details, Ref) => {
-    let res = await verifyRefOTP(OTP, urlkey,Ref);
+    let res = await verifyRefOTP(OTP, urlkey, Ref);
     let prof = JSON.parse(await AsyncStorage.getItem('profile'));
     let obj = {
       ...prof,
@@ -252,7 +254,7 @@ export const AppContextProvider = ({ children }) => {
   };
 
   const GroRefRegister = async (OTP, urlkey, details, Ref) => {
-    await GroVerifyRefOTP(OTP, urlkey,Ref);
+    await GroVerifyRefOTP(OTP, urlkey, Ref);
     let prof = JSON.parse(await AsyncStorage.getItem('profile'));
     let obj = {
       ...prof,
@@ -301,6 +303,50 @@ export const AppContextProvider = ({ children }) => {
     return 'Logged in successfully';
   };
 
+
+  const GroLoginWithOtp = async (phone, otp) => {
+    // Load existing profile if any
+    await loadProfile();
+
+    // Call OTP verify API
+    const response = await verifyLoginOtp(phone, otp);
+
+    if (!response?.success) {
+      throw new Error(response?.message || 'OTP verification failed');
+    }
+
+    const user = response.data;
+
+    // Get existing profile from storage
+    let prof = JSON.parse(await AsyncStorage.getItem('profile')) || {};
+
+    // Merge old + new
+    let obj = {
+      ...prof,
+      ...user,
+    };
+
+    // Save updated profile
+    await AsyncStorage.setItem('profile', JSON.stringify(obj));
+
+    // Merge cart / wishlist / server-side data
+    await GroMergeOnLogin();
+
+    // Update context
+    setProfile(obj);
+
+    // Reload profile (if required by your app)
+    await loadProfile();
+
+    // OneSignal mapping
+    if (user?.bkCustId) {
+      OneSignal.setExternalUserId(String(user.bkCustId));
+    }
+
+    return 'Logged in successfully';
+  };
+
+
   const logout = async () => {
     let prof = JSON.parse(await AsyncStorage.getItem('profile'));
     let obj = {
@@ -325,7 +371,8 @@ export const AppContextProvider = ({ children }) => {
     try {
       let res = await getWishList();
       setWishCount(res.length);
-    } catch (err) {;
+    } catch (err) {
+      ;
       Toast.show(err);
     }
   };
@@ -334,11 +381,12 @@ export const AppContextProvider = ({ children }) => {
     try {
       let res = await getGroWishList();
       setGroWishCount(res.length);
-    } catch (err) {;
+    } catch (err) {
+      ;
       Toast.show(err);
     }
   };
-  
+
   const updateLanguage = async () => {
     let langCode = await AsyncStorage.getItem('LangCode');
     if (langCode) {
@@ -382,7 +430,7 @@ export const AppContextProvider = ({ children }) => {
     GroCartList,
 
 
-    
+
     GroUpdateWishList,
     GroUpdateCart,
     GroCartData,
@@ -393,6 +441,9 @@ export const AppContextProvider = ({ children }) => {
     GroLogin,
     GroEditProfile,
     GroRefRegister,
+    locationNotFetched,
+    setLocationNotFetched,
+    GroLoginWithOtp
 
   };
 

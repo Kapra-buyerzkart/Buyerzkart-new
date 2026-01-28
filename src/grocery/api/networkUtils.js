@@ -71,7 +71,7 @@ const getNew = async (URL, config) => {
 };
 
 const post = async (URL, payload) => {
-  // console.log( CONFIG.base_url+URL, payload );
+  // console.log(CONFIG.base_url + URL, payload);
   // console.log({ URL, payload });
   try {
     // console.log('Payload from Utility :', payload);
@@ -79,9 +79,29 @@ const post = async (URL, payload) => {
       timeout: 20000,
       timeoutErrorMessage: 'Server is not responding',
     });
+    // console.log('result', result.data)
     let Message = result.data.Message;
     // console.log({ Message });
     return result.data.Data;
+  } catch (error) {
+    // console.log(URL, error, { payload });
+    errrHandler(error, URL, payload);
+  }
+};
+
+const postNew = async (URL, payload) => {
+  // console.log(CONFIG.base_url + URL, payload);
+  // console.log({ URL, payload });
+  try {
+    // console.log('Payload from Utility :', payload);
+    let result = await axiosInstance.post(URL, payload, {
+      timeout: 20000,
+      timeoutErrorMessage: 'Server is not responding',
+    });
+    // console.log('result', result.data)
+    let Message = result.data.Message;
+    // console.log({ Message });
+    return result.data;
   } catch (error) {
     // console.log(URL, error, { payload });
     errrHandler(error, URL, payload);
@@ -121,4 +141,4 @@ const put = async (URL, payload) => {
   }
 };
 
-export { get, post, put, postRegister, getNew };
+export { get, post, put, postRegister, getNew, postNew };

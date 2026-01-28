@@ -65,8 +65,8 @@ export default function WishIcon({
 const styles = StyleSheet.create({
 
     wishContainer: {
-        width: windowWidth * (8 / 100),
-        height: windowWidth * (8 / 100),
+        width: windowWidth * (7 / 100),
+        height: windowWidth * (7 / 100),
         borderRadius: windowWidth * (4 / 100),
         alignItems: 'center',
         justifyContent: 'center',

@@ -39,6 +39,7 @@ import GroProductCard from '../components/GroProductCard';
 import DeviceInfo from 'react-native-device-info';
 import AuthButton from '../components/AuthButton';
 import FooterCart from '../components/FooterCart';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 import {
   getHomeData,
@@ -59,13 +60,16 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import LocationDropdown from '../components/LocationDropdown';
-
+import GroProductCardNew from '../components/GroProductCardNew'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import CategoryGridNew from '../components/CategoryGridNew';
+import GroLoginScreen from './GroLoginScreen';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const GroHomeScreen = ({ navigation, route }) => {
-  const { profile, GroWishCount, editPincode, GroCartList, GroUpdateCart } = React.useContext(AppContext);
+  const { profile, GroWishCount, editPincode, GroCartList, GroUpdateCart, locationNotFetched, setLocationNotFetched } = React.useContext(AppContext);
   const { showLoader, loading } = React.useContext(LoaderContext);
 
   const [data, setData] = React.useState(null);
@@ -92,18 +96,35 @@ const GroHomeScreen = ({ navigation, route }) => {
   const [open, setOpen] = useState(false);
   const [selectedLocationValue, setSelectedLocationValue] = useState(null);
   const [dropdownItems, setDropdownItems] = useState([]);
-  const [locationNotFetched, setLocationNotFetched] = useState(false);
+  // const [locationNotFetched, setLocationNotFetched] = useState(false);
 
   useEffect(() => {
+    console.log('profile', profile)
+    if (!profile?.groceryCustId) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'GroLoginScreenNew' }],
+      });
+    }
+  }, [profile?.groceryCustId]);
+
+  // useEffect(() => {
+  //   if (!profile?.pinAddress) return;
+
+  //   Toast.show(`Delivery location changed to ${profile.pinAddress}`);
+  // }, [profile?.pinAddress]);
+
+  useEffect(() => {
+    if (!profile?.groceryCustId) return;   // 👈 not logged in
     if (!profile?.pinAddress) return;
 
     Toast.show(`Delivery location changed to ${profile.pinAddress}`);
-  }, [profile?.pinAddress]);
+  }, [profile?.pinAddress, profile?.groceryCustId]);
 
-  useEffect(() => {
-    const flag = route?.params?.locationNotFetched;
-    setLocationNotFetched(flag);
-  }, [route?.params]);
+  // useEffect(() => {
+  //   const flag = route?.params?.locationNotFetched;
+  //   setLocationNotFetched(flag);
+  // }, [route?.params]);
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -566,11 +587,12 @@ const GroHomeScreen = ({ navigation, route }) => {
       <LinearGradient
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
-        colors={[item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange, colours.kapraWhite]}
+        // colors={[item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange, colours.kapraWhite]}
+        colors={['#d08785', '#d08785', colours.kapraWhite]}
         style={profile.isPrime === true ? (
-          { width: windowWidth, height: windowHeight * (54 / 100), justifyContent: 'flex-end', alignItems: 'center' }
+          { width: windowWidth, height: windowHeight * (45.5 / 100), justifyContent: 'flex-end', alignItems: 'center' }
         ) : (
-          { width: windowWidth, height: windowHeight * (51 / 100), justifyContent: 'flex-end', alignItems: 'center' }
+          { width: windowWidth, height: windowHeight * (42.5 / 100), justifyContent: 'flex-end', alignItems: 'center' }
         )}
       >
         <TouchableOpacity
@@ -617,7 +639,7 @@ const GroHomeScreen = ({ navigation, route }) => {
           style={{ width: windowWidth, alignItems: 'center' }}
         >
           {/* Switch Con  */}
-          <View style={styles.appSwitchCon}>
+          {/* <View style={styles.appSwitchCon}>
             <AuthButton
               FirstColor={colours.kapraOrangeDark}
               SecondColor={colours.kapraOrange}
@@ -644,7 +666,7 @@ const GroHomeScreen = ({ navigation, route }) => {
               ButtonHeight={5}
               Font2
             />
-          </View>
+          </View> */}
 
           {/* Location Con  */}
           <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
@@ -752,7 +774,7 @@ const GroHomeScreen = ({ navigation, route }) => {
           style={{ width: windowWidth, alignItems: 'center' }}
         >
           {/* Switch Con  */}
-          <View style={styles.appSwitchCon}>
+          {/* <View style={styles.appSwitchCon}>
             <AuthButton
               FirstColor={colours.kapraOrangeDark}
               SecondColor={colours.kapraOrange}
@@ -779,7 +801,7 @@ const GroHomeScreen = ({ navigation, route }) => {
               ButtonHeight={5}
               Font2
             />
-          </View>
+          </View> */}
 
           {/* Location Con  */}
           <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
@@ -889,7 +911,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         style={{ width: windowWidth, alignItems: 'center' }}
       >
         {/* Switch Con  */}
-        <View style={styles.appSwitchCon}>
+        {/* <View style={styles.appSwitchCon}>
           <AuthButton
             FirstColor={colours.kapraOrangeDark}
             SecondColor={colours.kapraOrange}
@@ -916,7 +938,7 @@ const GroHomeScreen = ({ navigation, route }) => {
             ButtonHeight={5}
             Font2
           />
-        </View>
+        </View> */}
 
         {/* Location Con  */}
         <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
@@ -1055,8 +1077,7 @@ const GroHomeScreen = ({ navigation, route }) => {
 
 
         {/* Image Slider  */}
-        <View style={[styles.CarouselCon, { height: windowHeight * (51 / 100) }]}>
-          {/* {console.log("data", data)} */}
+        {/* <View style={[styles.CarouselCon, { height: windowHeight * (51 / 100) }]}>
           <Carousel
             autoplay
             data={data.MobileMainBanners}
@@ -1070,11 +1091,8 @@ const GroHomeScreen = ({ navigation, route }) => {
             autoplayInterval={4000}
             enableMomentum={true}
           />
-          {/* {console.log("PPPPPPP", profile)} */}
-          {/* {console.log('profile', profile)} */}
           <View style={{ position: 'absolute', width: windowWidth, alignItems: 'center' }}>
 
-            {/* Switch  */}
             <View style={[styles.appSwitchCon, { backgroundColor: 'transparent', height: windowHeight * (6 / 100) }]}>
               <AuthButton
                 FirstColor={colours.kapraOrangeDark}
@@ -1103,7 +1121,6 @@ const GroHomeScreen = ({ navigation, route }) => {
                 Font2
               />
             </View>
-            {/* Location Con  */}
             <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
               <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} />
               <TouchableOpacity style={styles.searchConBtn}
@@ -1127,6 +1144,130 @@ const GroHomeScreen = ({ navigation, route }) => {
               )}
             </View>
 
+            <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate('GroSearchModalScreen')}>
+              <View>{showIcon('search', colours.kapraBlackLow, windowWidth * (5 / 100))}</View>
+              <Text style={styles.searchFont}>
+                {'  '}Search products
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.deliveryBannerCon}>
+              <View>
+                <Text style={[styles.fontStyle1, { color: colours.kapraWhite }]}>Fast <Text style={[styles.fontStyle1, { color: colours.kapraOrangeLight }]}>Delivery</Text> within</Text>
+                <Text style={[styles.catNameFont, { color: colours.kapraOrangeLight, fontSize: getFontontSize(18) }]}>20 Minutes</Text>
+              </View>
+              <Text style={[styles.fontStyle1, { color: colours.kapraWhite }]}>Life Made Easier For You</Text>
+            </View>
+
+          </View>
+        </View> */}
+
+        <View style={profile.isPrime === true ? [styles.CarouselCon, {
+          height: windowHeight * (42 / 100),
+        }] : [styles.CarouselCon, { height: windowHeight * (39 / 100) }]}>
+          <Carousel
+            autoplay
+            data={data.MobileMainBanners}
+            renderItem={_renderMainBanner}
+            sliderWidth={windowWidth}
+            itemWidth={windowWidth}
+            loop={true}
+            layout={'stack'}
+            enableSnap={true}
+            scrollViewProps={{ decelerationRate: 'normal' }}
+            autoplayInterval={4000}
+            enableMomentum={true}
+          />
+          <View style={{ position: 'absolute', width: windowWidth, alignItems: 'center', top: hp('2%') }}>
+
+            {/* Switch  */}
+            {/* <View style={[styles.appSwitchCon, { backgroundColor: 'transparent', height: windowHeight * (6 / 100) }]}>
+              <AuthButton
+                FirstColor={colours.kapraOrangeDark}
+                SecondColor={colours.kapraOrange}
+                OnPress={() => null}
+                ButtonText={'K GROCERY'}
+                ButtonWidth={44}
+                ButtonHeight={5}
+                Font2
+              />
+              <AuthButton
+                FirstColor={colours.kapraWhite}
+                SecondColor={colours.kapraWhite}
+                FColor={colours.kapraOrange}
+                OnPress={async () => {
+                  await AsyncStorage.setItem('currentApp', 'BUYERZ'),
+                    navigation.reset({
+                      index: 0,
+                      routes: [{ name: 'BuyerzHomeScreen' }],
+                    })
+                }
+                }
+                ButtonText={'K SHOPE'}
+                ButtonWidth={44}
+                ButtonHeight={5}
+                Font2
+              />
+            </View> */}
+            <View style={styles.headerView}>
+              <Text style={styles.timeText}>20 min</Text>
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}>
+                <TouchableOpacity style={styles.searchConBtn}
+                  onPress={() => profile.groceryCustId ? navigation.navigate('GroReferralScreen') : Toast.show('Please Login!')}>
+                  {showIcon('share', colours.primaryWhite, windowWidth * (6 / 100))}
+                </TouchableOpacity>
+
+                {profile.isPrime !== true ? (
+                  <TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
+                    {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
+
+                    {GroWishCount > 0 && (
+                      <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
+                    )}
+                  </TouchableOpacity>
+                ) : (<Image
+                  source={require('../../assets/images/primebadge.png')}
+                  style={{
+                    height: windowWidth * (16 / 100),
+                    width: windowWidth * (16 / 100),
+                    // resizeMode: 'contain',
+                  }} />)}
+              </View>
+            </View>
+            {/* Location Con  */}
+            {/* <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
+              <TouchableOpacity style={styles.searchConBtn}
+                onPress={() => profile.groceryCustId ? navigation.navigate('GroReferralScreen') : Toast.show('Please Login!')}>
+                {showIcon('share', colours.primaryWhite, windowWidth * (6 / 100))}
+              </TouchableOpacity>
+              {profile.isPrime !== true ? (<TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
+                {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
+
+                {GroWishCount > 0 && (
+                  <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
+                )}
+              </TouchableOpacity>
+              ) : (<Image
+                source={require('../../assets/images/primebadge.png')}
+                style={{
+                  height: windowWidth * (16 / 100),
+                  width: windowWidth * (16 / 100),
+                  // resizeMode: 'contain',
+                }} />
+              )}
+            </View> */}
+            <View style={{
+              // backgroundColor: 'green',
+              width: windowWidth,
+              paddingHorizontal: windowWidth * (5 / 100),
+              // bottom: hp('3%')
+              bottom: profile.isPrime === true ? hp('3%') : hp('2%')
+            }}>
+              <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 64 : 68} />
+            </View>
             {/* Search Con  */}
             <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate('GroSearchModalScreen')}>
               <View>{showIcon('search', colours.kapraBlackLow, windowWidth * (5 / 100))}</View>
@@ -1136,13 +1277,13 @@ const GroHomeScreen = ({ navigation, route }) => {
             </TouchableOpacity>
 
             {/* 20 Min Banner  */}
-            <View style={styles.deliveryBannerCon}>
+            {/* <View style={styles.deliveryBannerCon}>
               <View>
                 <Text style={[styles.fontStyle1, { color: colours.kapraWhite }]}>Fast <Text style={[styles.fontStyle1, { color: colours.kapraOrangeLight }]}>Delivery</Text> within</Text>
                 <Text style={[styles.catNameFont, { color: colours.kapraOrangeLight, fontSize: getFontontSize(18) }]}>20 Minutes</Text>
               </View>
               <Text style={[styles.fontStyle1, { color: colours.kapraWhite }]}>Life Made Easier For You</Text>
-            </View>
+            </View> */}
 
           </View>
         </View>
@@ -1255,15 +1396,15 @@ const GroHomeScreen = ({ navigation, route }) => {
         }
 
         {/* Categories  */}
-        {
+        {/* {
           categoryData && categoryData.length > 0 &&
           categoryData.map((item) => (
-            <View style={{ width: windowWidth, alignItems: 'center' }}>
-              {/* <TouchableOpacity style={styles.headerNameCon} onPress={()=>navigation.navigate('GroSearchScreen',{catUrlKey:item?.catUrlKey})}>
+            <View style={{ width: windowWidth, alignItems: 'center' }}> */}
+        {/* <TouchableOpacity style={styles.headerNameCon} onPress={()=>navigation.navigate('GroSearchScreen',{catUrlKey:item?.catUrlKey})}>
                   <Text style={styles.catNameFont}>{item.mainCatName}</Text>
                   <Text style={styles.seeAllFont}>See All</Text>
                 </TouchableOpacity> */}
-              <FlatList
+        {/* <FlatList
                 ItemSeparatorComponent={<View style={{ width: 10 }} />}
                 data={JSON.parse(item?.SubCategories_JSON)}
                 numColumns={4}
@@ -1283,7 +1424,63 @@ const GroHomeScreen = ({ navigation, route }) => {
               />
             </View>
           ))
+        } */}
+
+        {
+          categoryData && categoryData.length > 0 &&
+          categoryData.map((item) => (
+            <View style={{
+              width: windowWidth, paddingHorizontal: wp("4.6%"),
+              marginTop: hp('0.5%')
+            }}>
+              <Text style={[styles.fontStyle3, {
+                marginBottom: hp('2.5%'),
+              }]}>Categories</Text>
+              {/* <TouchableOpacity style={styles.headerNameCon} onPress={()=>navigation.navigate('GroSearchScreen',{catUrlKey:item?.catUrlKey})}>
+                  <Text style={styles.catNameFont}>{item.mainCatName}</Text>
+                  <Text style={styles.seeAllFont}>See All</Text>
+                </TouchableOpacity> */}
+              {/* <FlatList
+                ItemSeparatorComponent={<View style={{ width: 10 }} />}
+                data={JSON.parse(item?.SubCategories_JSON)}
+                numColumns={4}
+                columnWrapperStyle={{ justifyContent: 'flex-start' }}
+                renderItem={({ item, index }) => (
+                  <CategoryGridNew
+                    title={item.subCatName}
+                    image={item.subCatImage}
+                    index={index}
+                    Nav={() => {
+                      // console.log("I : ", item)
+                      navigation.navigate('GroSearchScreen', { catUrlKey: item?.subCatUrlKey })
+                    }}
+                  />
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              /> */}
+              <FlatList
+                data={JSON.parse(item?.SubCategories_JSON)}
+                numColumns={4}
+                keyExtractor={(item, index) => index.toString()}
+                columnWrapperStyle={styles.row}
+                renderItem={({ item, index }) => (
+                  <CategoryGridNew
+                    title={item.subCatName}
+                    image={item.subCatImage}
+                    index={index}
+                    Nav={() => {
+                      // console.log("I : ", item)
+                      navigation.navigate('GroSearchScreen', { catUrlKey: item?.subCatUrlKey })
+                    }}
+                  />
+                )}
+                showsVerticalScrollIndicator={false}
+              />
+
+            </View>
+          ))
         }
+
 
         {/* Top Deals  */}
         {
@@ -1333,6 +1530,113 @@ const GroHomeScreen = ({ navigation, route }) => {
 
         {/* Latest Product */}
         {
+          latestArrivalData && latestArrivalData.length > 0 && (
+            <View style={{ width: windowWidth, alignItems: 'center' }}>
+              <View style={styles.headerNameCon}>
+                <Text style={styles.fontStyle3}>Latest Product</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Latest Arrival' })} style={styles.viewAllContainer}>
+                  <Text style={styles.viewAllText}>View All</Text>
+                  <MaterialIcons name={"arrow-forward-ios"} color={"#FF7B3A"} size={wp("3.3%")} style={Platform.OS === 'android' ? (
+                    [styles.viewAllRightArrowIcon, {
+                      bottom: hp('0.1%')
+                    }]
+                  ) : (styles.viewAllRightArrowIcon)} />
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                // ItemSeparatorComponent={<View style={{ width: 10 }} />}
+                showsHorizontalScrollIndicator={false}
+                horizontal={true}
+                data={latestArrivalData.slice(0, 4)}
+                contentContainerStyle={{
+                  paddingVertical: hp('0.5%'),
+                  paddingLeft: wp('4%')
+                }}
+                // numColumns={2}
+                // columnWrapperStyle={{ justifyContent: "space-between" }}
+                renderItem={({ item, index }) => (
+                  // <GroProductCardNew
+                  // Name={item.prName}
+                  // Image={item.imageUrl}
+                  // Price={item.unitPrice}
+                  // BTValue={item.bvValue}
+                  // SpecialPrice={item.specialPrice}
+                  //   ProductWeight={item.prWeight}
+                  //   Variations={item.variationJson ? item.variationJson : null}
+                  //   GotoCart={() => navigation.navigate("GroCartScreen")}
+                  //   URLKey={item.urlKey}
+                  //   StockAvailability={item.stockAvailability}
+                  //   ProductID={item.productId}
+                  //   BGColor={colours.lowWhite}
+                  //   NoBlur
+                  //   OnPress={() => {
+                  //     if (item.urlKey !== null) {
+                  //       navigation.navigate('GroSingleItemScreen', {
+                  //         UrlKey: item.urlKey,
+                  //         ItemData: item
+                  //       });
+                  //     } else {
+                  //       Toast.show("Url Key Is Null");
+                  //     }
+                  //   }}
+                  // />
+                  <GroProductCardNew
+                    Name={item.prName}
+                    Image={item.imageUrl}
+                    Price={item.unitPrice}
+                    BTValue={item.bvValue}
+                    SpecialPrice={item.specialPrice}
+                    ProductWeight={item.prWeight}
+                    Variations={item.variationJson ? item.variationJson : null}
+                    GotoCart={() => navigation.navigate("GroCartScreen")}
+                    URLKey={item.urlKey}
+                    StockAvailability={item.stockAvailability}
+                    ProductID={item.productId}
+                    BGColor={colours.lowWhite}
+                    NoBlur
+                    OnPress={() => {
+                      if (item.urlKey !== null) {
+                        navigation.navigate('GroSingleItemScreen', {
+                          UrlKey: item.urlKey,
+                          ItemData: item
+                        });
+                      } else {
+                        Toast.show("Url Key Is Null");
+                      }
+                    }}
+                  />
+                )}
+                // ListFooterComponent={
+                //   <TouchableOpacity style={styles.viewAllFooterCon} onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Latest Arrival' })}>
+                //     <View style={styles.ViewAllItemImg}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[0]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (4 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[1]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (8 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[3]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <Text style={[styles.fontStyle1, { left: -windowWidth * (6 / 100) }]}>See All Products</Text>
+
+                //   </TouchableOpacity>
+                // }
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          )
+        }
+
+        {/* {
           latestArrivalData && latestArrivalData.length > 0 && (
             <View style={{ width: windowWidth, alignItems: 'center' }}>
               <View style={styles.headerNameCon}>
@@ -1398,7 +1702,7 @@ const GroHomeScreen = ({ navigation, route }) => {
               />
             </View>
           )
-        }
+        } */}
 
         {/* Banner 1  */}
         <View style={styles.CarouselCon}>
@@ -1416,7 +1720,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         </View>
 
         {/* Featured Product  */}
-        {
+        {/* {
           featuredData && featuredData.length > 0 && (
             <View style={{ width: windowWidth, alignItems: 'center' }}>
               <View style={styles.headerNameCon}>
@@ -1482,6 +1786,112 @@ const GroHomeScreen = ({ navigation, route }) => {
               />
             </View>
           )
+        } */}
+
+        {
+          featuredData && featuredData.length > 0 && (
+            <View style={{ width: windowWidth, alignItems: 'center' }}>
+              <View style={styles.headerNameCon}>
+                <Text style={styles.fontStyle3}>Featured Product</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Featured Product' })} style={styles.viewAllContainer}>
+                  <Text style={styles.viewAllText}>View All</Text>
+                  <MaterialIcons name={"arrow-forward-ios"} color={"#FF7B3A"} size={wp("3.3%")} style={Platform.OS === 'android' ? (
+                    [styles.viewAllRightArrowIcon, {
+                      bottom: hp('0.1%')
+                    }]
+                  ) : (styles.viewAllRightArrowIcon)} />
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                // ItemSeparatorComponent={<View style={{ width: 10 }} />}
+                horizontal={true}
+                data={featuredData.slice(0, 4)}
+                contentContainerStyle={{
+                  paddingVertical: hp('0.5%'),
+                  paddingLeft: wp('4%')
+                }}
+                // numColumns={2}
+                // columnWrapperStyle={{ justifyContent: "space-between" }}
+                renderItem={({ item, index }) => (
+                  // <GroProductCardNew
+                  // Name={item.prName}
+                  // Image={item.imageUrl}
+                  // Price={item.unitPrice}
+                  // BTValue={item.bvValue}
+                  // SpecialPrice={item.specialPrice}
+                  //   ProductWeight={item.prWeight}
+                  //   Variations={item.variationJson ? item.variationJson : null}
+                  //   GotoCart={() => navigation.navigate("GroCartScreen")}
+                  //   URLKey={item.urlKey}
+                  //   StockAvailability={item.stockAvailability}
+                  //   ProductID={item.productId}
+                  //   BGColor={colours.lowWhite}
+                  //   NoBlur
+                  //   OnPress={() => {
+                  //     if (item.urlKey !== null) {
+                  //       navigation.navigate('GroSingleItemScreen', {
+                  //         UrlKey: item.urlKey,
+                  //         ItemData: item
+                  //       });
+                  //     } else {
+                  //       Toast.show("Url Key Is Null");
+                  //     }
+                  //   }}
+                  // />
+                  <GroProductCardNew
+                    Name={item.prName}
+                    Image={item.imageUrl}
+                    Price={item.unitPrice}
+                    BTValue={item.bvValue}
+                    SpecialPrice={item.specialPrice}
+                    ProductWeight={item.prWeight}
+                    Variations={item.variationJson ? item.variationJson : null}
+                    GotoCart={() => navigation.navigate("GroCartScreen")}
+                    URLKey={item.urlKey}
+                    StockAvailability={item.stockAvailability}
+                    ProductID={item.productId}
+                    BGColor={colours.lowWhite}
+                    NoBlur
+                    OnPress={() => {
+                      if (item.urlKey !== null) {
+                        navigation.navigate('GroSingleItemScreen', {
+                          UrlKey: item.urlKey,
+                          ItemData: item
+                        });
+                      } else {
+                        Toast.show("Url Key Is Null");
+                      }
+                    }}
+                  />
+                )}
+                // ListFooterComponent={
+                //   <TouchableOpacity style={styles.viewAllFooterCon} onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Latest Arrival' })}>
+                //     <View style={styles.ViewAllItemImg}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[0]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (4 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[1]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (8 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[3]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <Text style={[styles.fontStyle1, { left: -windowWidth * (6 / 100) }]}>See All Products</Text>
+
+                //   </TouchableOpacity>
+                // }
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          )
         }
 
         {/* Banner 2  */}
@@ -1500,7 +1910,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         </View>
 
         {/* Popular Product  */}
-        {
+        {/* {
           popularData && popularData.length > 0 && (
             <View style={{ width: windowWidth, alignItems: 'center' }}>
               <View style={styles.headerNameCon}>
@@ -1566,7 +1976,115 @@ const GroHomeScreen = ({ navigation, route }) => {
               />
             </View>
           )
+        } */}
+
+        {
+          popularData && popularData.length > 0 && (
+            <View style={{ width: windowWidth, alignItems: 'center' }}>
+              <View style={styles.headerNameCon}>
+                <Text style={styles.fontStyle3}>Popular Product</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Popular Product' })} style={styles.viewAllContainer}>
+                  <Text style={styles.viewAllText}>View All</Text>
+                  <MaterialIcons name={"arrow-forward-ios"} color={"#FF7B3A"} size={wp("3.3%")} style={Platform.OS === 'android' ? (
+                    [styles.viewAllRightArrowIcon, {
+                      bottom: hp('0.1%')
+                    }]
+                  ) : (styles.viewAllRightArrowIcon)} />
+                </TouchableOpacity>
+              </View>
+              <FlatList
+                // ItemSeparatorComponent={<View style={{ width: 10 }} />}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                data={popularData.slice(0, 4)}
+                contentContainerStyle={{
+                  paddingVertical: hp('0.5%'),
+                  paddingLeft: wp('4%')
+                }}
+                // numColumns={2}
+                // columnWrapperStyle={{ justifyContent: "space-between" }}
+                renderItem={({ item, index }) => (
+                  // <GroProductCardNew
+                  // Name={item.prName}
+                  // Image={item.imageUrl}
+                  // Price={item.unitPrice}
+                  // BTValue={item.bvValue}
+                  // SpecialPrice={item.specialPrice}
+                  //   ProductWeight={item.prWeight}
+                  //   Variations={item.variationJson ? item.variationJson : null}
+                  //   GotoCart={() => navigation.navigate("GroCartScreen")}
+                  //   URLKey={item.urlKey}
+                  //   StockAvailability={item.stockAvailability}
+                  //   ProductID={item.productId}
+                  //   BGColor={colours.lowWhite}
+                  //   NoBlur
+                  //   OnPress={() => {
+                  //     if (item.urlKey !== null) {
+                  //       navigation.navigate('GroSingleItemScreen', {
+                  //         UrlKey: item.urlKey,
+                  //         ItemData: item
+                  //       });
+                  //     } else {
+                  //       Toast.show("Url Key Is Null");
+                  //     }
+                  //   }}
+                  // />
+                  <GroProductCardNew
+                    Name={item.prName}
+                    Image={item.imageUrl}
+                    Price={item.unitPrice}
+                    BTValue={item.bvValue}
+                    SpecialPrice={item.specialPrice}
+                    ProductWeight={item.prWeight}
+                    Variations={item.variationJson ? item.variationJson : null}
+                    GotoCart={() => navigation.navigate("GroCartScreen")}
+                    URLKey={item.urlKey}
+                    StockAvailability={item.stockAvailability}
+                    ProductID={item.productId}
+                    BGColor={colours.lowWhite}
+                    NoBlur
+                    OnPress={() => {
+                      if (item.urlKey !== null) {
+                        navigation.navigate('GroSingleItemScreen', {
+                          UrlKey: item.urlKey,
+                          ItemData: item
+                        });
+                      } else {
+                        Toast.show("Url Key Is Null");
+                      }
+                    }}
+                  />
+                )}
+                // ListFooterComponent={
+                //   <TouchableOpacity style={styles.viewAllFooterCon} onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Latest Arrival' })}>
+                //     <View style={styles.ViewAllItemImg}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[0]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (4 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[1]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (8 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[3]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <Text style={[styles.fontStyle1, { left: -windowWidth * (6 / 100) }]}>See All Products</Text>
+
+                //   </TouchableOpacity>
+                // }
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          )
         }
+
 
         {/* Banner 3 */}
         <View style={styles.CarouselCon}>
@@ -1585,7 +2103,7 @@ const GroHomeScreen = ({ navigation, route }) => {
 
 
         {/* Recommended Products  */}
-        {
+        {/* {
           recommendedProducts && recommendedProducts.length > 0 && (
             <View style={{ width: windowWidth, alignItems: 'center' }}>
               <View style={styles.headerNameCon}>
@@ -1627,7 +2145,115 @@ const GroHomeScreen = ({ navigation, route }) => {
               />
             </View>
           )
+        } */}
+
+        {
+          popularData && popularData.length > 0 && (
+            <View style={{ width: windowWidth, alignItems: 'center' }}>
+              <View style={styles.headerNameCon}>
+                <Text style={styles.fontStyle3}>Recommended Products</Text>
+                {/* <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Popular Product' })} style={styles.viewAllContainer}>
+                  <Text style={styles.viewAllText}>View All</Text>
+                  <MaterialIcons name={"arrow-forward-ios"} color={"#FF7B3A"} size={wp("3.3%")} style={Platform.OS === 'android' ? (
+                    [styles.viewAllRightArrowIcon, {
+                      bottom: hp('0.1%')
+                    }]
+                  ) : (styles.viewAllRightArrowIcon)} />
+                </TouchableOpacity> */}
+              </View>
+              <FlatList
+                // ItemSeparatorComponent={<View style={{ width: 10 }} />}
+                showsHorizontalScrollIndicator={false}
+                horizontal={true}
+                data={recommendedProducts.slice(0, 6)}
+                contentContainerStyle={{
+                  paddingVertical: hp('0.5%'),
+                  paddingLeft: wp('4%')
+                }}
+                // numColumns={2}
+                // columnWrapperStyle={{ justifyContent: "space-between" }}
+                renderItem={({ item, index }) => (
+                  // <GroProductCardNew
+                  // Name={item.prName}
+                  // Image={item.imageUrl}
+                  // Price={item.unitPrice}
+                  // BTValue={item.bvValue}
+                  // SpecialPrice={item.specialPrice}
+                  //   ProductWeight={item.prWeight}
+                  //   Variations={item.variationJson ? item.variationJson : null}
+                  //   GotoCart={() => navigation.navigate("GroCartScreen")}
+                  //   URLKey={item.urlKey}
+                  //   StockAvailability={item.stockAvailability}
+                  //   ProductID={item.productId}
+                  //   BGColor={colours.lowWhite}
+                  //   NoBlur
+                  //   OnPress={() => {
+                  //     if (item.urlKey !== null) {
+                  //       navigation.navigate('GroSingleItemScreen', {
+                  //         UrlKey: item.urlKey,
+                  //         ItemData: item
+                  //       });
+                  //     } else {
+                  //       Toast.show("Url Key Is Null");
+                  //     }
+                  //   }}
+                  // />
+                  <GroProductCardNew
+                    Name={item.prName}
+                    Image={item.imageUrl}
+                    Price={item.unitPrice}
+                    BTValue={item.bvValue}
+                    SpecialPrice={item.specialPrice}
+                    ProductWeight={item.prWeight}
+                    Variations={item.variationJson ? item.variationJson : null}
+                    GotoCart={() => navigation.navigate("GroCartScreen")}
+                    URLKey={item.urlKey}
+                    StockAvailability={item.stockAvailability}
+                    ProductID={item.productId}
+                    BGColor={colours.lowWhite}
+                    NoBlur
+                    OnPress={() => {
+                      if (item.urlKey !== null) {
+                        navigation.navigate('GroSingleItemScreen', {
+                          UrlKey: item.urlKey,
+                          ItemData: item
+                        });
+                      } else {
+                        Toast.show("Url Key Is Null");
+                      }
+                    }}
+                  />
+                )}
+                // ListFooterComponent={
+                //   <TouchableOpacity style={styles.viewAllFooterCon} onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Latest Arrival' })}>
+                //     <View style={styles.ViewAllItemImg}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[0]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (4 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[1]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (8 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[3]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <Text style={[styles.fontStyle1, { left: -windowWidth * (6 / 100) }]}>See All Products</Text>
+
+                //   </TouchableOpacity>
+                // }
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          )
         }
+
 
         {/* Banner 4 */}
         <View style={styles.CarouselCon}>
@@ -1645,7 +2271,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         </View>
 
         {/* Recently Viewed Products  */}
-        {
+        {/* {
           recentData && recentData.length > 0 && (
             <View style={{ width: windowWidth, alignItems: 'center' }}>
               <View style={styles.headerNameCon}>
@@ -1683,6 +2309,113 @@ const GroHomeScreen = ({ navigation, route }) => {
                     }}
                   />
                 )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
+          )
+        } */}
+
+        {
+          recentData && recentData.length > 0 && (
+            <View style={{ width: windowWidth, alignItems: 'center' }}>
+              <View style={styles.headerNameCon}>
+                <Text style={styles.fontStyle3}>Recently Viewed Products</Text>
+                {/* <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Popular Product' })} style={styles.viewAllContainer}>
+                  <Text style={styles.viewAllText}>View All</Text>
+                  <MaterialIcons name={"arrow-forward-ios"} color={"#FF7B3A"} size={wp("3.3%")} style={Platform.OS === 'android' ? (
+                    [styles.viewAllRightArrowIcon, {
+                      bottom: hp('0.1%')
+                    }]
+                  ) : (styles.viewAllRightArrowIcon)} />
+                </TouchableOpacity> */}
+              </View>
+              <FlatList
+                // ItemSeparatorComponent={<View style={{ width: 10 }} />}
+                horizontal={true}
+                showsHorizontalScrollIndicator={false}
+                data={recentData.slice(0, 6)}
+                contentContainerStyle={{
+                  paddingVertical: hp('0.5%'),
+                  paddingLeft: wp('4%')
+                }}
+                // numColumns={2}
+                // columnWrapperStyle={{ justifyContent: "space-between" }}
+                renderItem={({ item, index }) => (
+                  // <GroProductCardNew
+                  // Name={item.prName}
+                  // Image={item.imageUrl}
+                  // Price={item.unitPrice}
+                  // BTValue={item.bvValue}
+                  // SpecialPrice={item.specialPrice}
+                  //   ProductWeight={item.prWeight}
+                  //   Variations={item.variationJson ? item.variationJson : null}
+                  //   GotoCart={() => navigation.navigate("GroCartScreen")}
+                  //   URLKey={item.urlKey}
+                  //   StockAvailability={item.stockAvailability}
+                  //   ProductID={item.productId}
+                  //   BGColor={colours.lowWhite}
+                  //   NoBlur
+                  //   OnPress={() => {
+                  //     if (item.urlKey !== null) {
+                  //       navigation.navigate('GroSingleItemScreen', {
+                  //         UrlKey: item.urlKey,
+                  //         ItemData: item
+                  //       });
+                  //     } else {
+                  //       Toast.show("Url Key Is Null");
+                  //     }
+                  //   }}
+                  // />
+                  <GroProductCardNew
+                    Name={item.prName}
+                    Image={item.imageUrl}
+                    Price={item.unitPrice}
+                    BTValue={item.bvValue}
+                    SpecialPrice={item.specialPrice}
+                    ProductWeight={item.prWeight}
+                    Variations={item.variationJson ? item.variationJson : null}
+                    GotoCart={() => navigation.navigate("GroCartScreen")}
+                    URLKey={item.urlKey}
+                    StockAvailability={item.stockAvailability}
+                    ProductID={item.productId}
+                    BGColor={colours.lowWhite}
+                    NoBlur
+                    OnPress={() => {
+                      if (item.urlKey !== null) {
+                        navigation.navigate('GroSingleItemScreen', {
+                          UrlKey: item.urlKey,
+                          ItemData: item
+                        });
+                      } else {
+                        Toast.show("Url Key Is Null");
+                      }
+                    }}
+                  />
+                )}
+                // ListFooterComponent={
+                //   <TouchableOpacity style={styles.viewAllFooterCon} onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Latest Arrival' })}>
+                //     <View style={styles.ViewAllItemImg}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[0]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (4 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[1]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <View style={[styles.ViewAllItemImg, { left: -windowWidth * (8 / 100) }]}>
+                //       <Image
+                //         source={{ uri: getImage(latestArrivalData[3]?.imageUrl) }}
+                //         style={styles.viewAllImgStyle}
+                //       />
+                //     </View>
+                //     <Text style={[styles.fontStyle1, { left: -windowWidth * (6 / 100) }]}>See All Products</Text>
+
+                //   </TouchableOpacity>
+                // }
                 keyExtractor={(item, index) => index.toString()}
               />
             </View>
@@ -1826,7 +2559,6 @@ const GroHomeScreen = ({ navigation, route }) => {
               reducedTransparencyFallbackColor="black"
             />
 
-            {/* ✅ Bottom-aligned modal container */}
             <View style={[styles.updateModalView1, { overflow: 'visible', zIndex: 1000, elevation: 5, bottom: 0 }]}>
               <Image
                 source={require('../../assets/logo/logo.png')}
@@ -1939,7 +2671,7 @@ const styles = StyleSheet.create({
   CarouselCon: {
     height: windowWidth * (55 / 100),
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   bannerImage: {
     width: windowWidth,
@@ -2180,7 +2912,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     width: windowWidth * (90 / 100),
     height: windowHeight * (5 / 100),
-    marginVertical: windowHeight * (1 / 100),
+    // marginVertical: windowHeight * (1 / 100),
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: windowWidth * (3 / 100),
@@ -2322,6 +3054,37 @@ const styles = StyleSheet.create({
     fontSize: getFontontSize(16),
     color: colours.primaryBlack,
   },
+  viewAllContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  viewAllText: {
+    fontFamily: 'Outfit-Regular',
+    fontSize: wp("3.5%"),
+    color: "#FF7B3A"
+  },
+  viewAllRightArrowIcon: {
+    marginLeft: 5
+  },
+  row: {
+    justifyContent: 'space-between',
+    marginBottom: hp('2%'),
+  },
+  headerView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    // backgroundColor: 'red',
+    width: windowWidth,
+    paddingLeft: windowWidth * (6 / 100),
+    paddingRight: windowWidth * (3 / 100),
+    marginTop: hp('1%')
+  },
+  timeText: {
+    fontFamily: 'Poppins-ExtraBold',
+    color: "#FFFFFF",
+    fontSize: wp('6%'),
+  }
 });
 
 

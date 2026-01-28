@@ -14,6 +14,7 @@ import GroFilterScreen from '../screens/GroFilterScreen';
 import GroSingleItemScreen from '../screens/GroSingleItemScreen';
 import GroWishListScreen from '../screens/GroWishListScreen';
 import GroLoginScreen from '../screens/GroLoginScreen';
+import GroLoginScreenNew from '../screens/GroLoginScreenNew';
 import GroRegisterScreen from '../screens/GroRegisterScreen';
 import GroEnterOTPScreen from '../screens/GroEnterOTPScreen';
 import GroAddressScreen from '../screens/GroAddressScreen';
@@ -43,16 +44,19 @@ import TestScreen from '../screens/TestScreen';
 
 import GroMyTabs from './TabNavigator';
 import GroLocationFetchNew from '../screens/GroLocationFetchNew';
+import GroLoginOtpScreen from '../screens/GroLoginOtpScreen';
+import GroLoginScreenThree from '../screens/GroLoginScreenThree';
+import GroRegisterNewScreen from '../screens/GroRegisterNewScreen';
 
 const Stack = createStackNavigator();
 
 export default function HomeStackNavigator() {
 
   return (
-    <Stack.Navigator 
+    <Stack.Navigator
       screenOptions={{ headerShown: false }}
       initialRouteName={'GroLocationFetchNew'}
-      // initialRouteName={'GroHomeScreen'}
+    // initialRouteName={'GroHomeScreen'}
     >
       <Stack.Screen name="GroHomeScreen" component={GroMyTabs} />
       <Stack.Screen name="BuyerzHomeScreen" component={BuyerzHomeScreen} />
@@ -66,6 +70,10 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="GroSingleItemScreen" component={GroSingleItemScreen} />
       <Stack.Screen name="GroWishListScreen" component={GroWishListScreen} />
       <Stack.Screen name="GroLoginScreen" component={GroLoginScreen} />
+      <Stack.Screen name="GroLoginScreenNew" component={GroLoginScreenNew} />
+      <Stack.Screen name="GroRegisterNewScreen" component={GroRegisterNewScreen} />
+      <Stack.Screen name="GroLoginScreenThree" component={GroLoginScreenThree} />
+      <Stack.Screen name="GroLoginOtpScreen" component={GroLoginOtpScreen} />
       <Stack.Screen name="GroRegisterScreen" component={GroRegisterScreen} />
       <Stack.Screen name="GroEnterOTPScreen" component={GroEnterOTPScreen} />
       <Stack.Screen name="GroAddressScreen" component={GroAddressScreen} />

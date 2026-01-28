@@ -1275,7 +1275,7 @@ const GroCartScreen = ({ navigation, route }) => {
               </View>
             :
             <View style={styles.bottomButtonContainer}>
-              <TouchableOpacity style={styles.botoomButton} onPress={() => navigation.navigate('GroLoginScreen')}>
+              <TouchableOpacity style={styles.botoomButton} onPress={() => navigation.navigate('GroLoginScreenNew')}>
                 <Text style={[styles.fontStyle1, { color: colours.primaryWhite }]} >
                   Login
                 </Text>

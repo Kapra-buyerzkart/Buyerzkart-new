@@ -30,6 +30,7 @@ import GroLoginScreen from '../screens/GroLoginScreen';
 import { getFontontSize } from '../globals/GroFunctions';
 import AuthButton from '../components/AuthButton';
 import { deleteAccount, getProfile } from '../api';
+import GroLoginScreenNew from './GroLoginScreenNew';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -68,8 +69,9 @@ const GroProfileScreen = ({ navigation, route }) => {
 
 
   if (!profile.groceryCustId) {
-    return <GroLoginScreen navigation={navigation} />;
+    return <GroLoginScreenNew navigation={navigation} />;
   }
+
   return (
     <SafeAreaView style={styles.mainContainer}>
 
