@@ -792,7 +792,9 @@ const GroCartScreen = ({ navigation, route }) => {
   }
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
+    <SafeAreaView style={Platform.OS === 'android' ? [styles.mainContainer, {
+      paddingBottom: insets.bottom
+    }] : styles.mainContainer}>
 
       {/* Header Con  */}
       <View style={styles.headerCon}>

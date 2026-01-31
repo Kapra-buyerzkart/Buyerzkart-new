@@ -14,7 +14,8 @@ import {
   Modal,
   Platform,
   Linking,
-  Alert
+  Alert,
+  ImageBackground
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -64,6 +65,7 @@ import GroProductCardNew from '../components/GroProductCardNew'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import CategoryGridNew from '../components/CategoryGridNew';
 import GroLoginScreen from './GroLoginScreen';
+import Svg, { Defs, Path, RadialGradient, Stop } from 'react-native-svg';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -96,10 +98,14 @@ const GroHomeScreen = ({ navigation, route }) => {
   const [open, setOpen] = useState(false);
   const [selectedLocationValue, setSelectedLocationValue] = useState(null);
   const [dropdownItems, setDropdownItems] = useState([]);
+  const [activeIndexOne, setActiveIndexOne] = useState(0);
+  const [activeIndexTwo, setActiveIndexTwo] = useState(0);
+  const [activeIndexThree, setActiveIndexThree] = useState(0);
+  const [activeIndexFour, setActiveIndexFour] = useState(0);
   // const [locationNotFetched, setLocationNotFetched] = useState(false);
 
   useEffect(() => {
-    console.log('profile', profile)
+    // console.log('profile', profile)
     if (!profile?.groceryCustId) {
       navigation.reset({
         index: 0,
@@ -180,6 +186,33 @@ const GroHomeScreen = ({ navigation, route }) => {
       Toast.show('Failed to change delivery location');
       console.error('Error changing location:', error);
     }
+  };
+
+  useEffect(() => {
+    fetchBCoinData()
+  }, [])
+
+  const GradientUserIcon = ({ size }) => {
+    return (
+      <Svg width={size} height={size} viewBox="0 0 24 24">
+
+        <Defs>
+          <RadialGradient
+            id="grad"
+            cx="50%" cy="50%"
+            r="60%"
+          >
+            <Stop offset="0%" stopColor="#FFF09C" />
+            <Stop offset="100%" stopColor="#D2B200" />
+          </RadialGradient>
+        </Defs>
+
+        <Path
+          fill="url(#grad)"
+          d="M12 12c2.76 0 5-2.46 5-5.5S14.76 1 12 1 7 3.46 7 6.5 9.24 12 12 12zm0 2c-3.33 0-10 1.67-10 5v4h20v-4c0-3.33-6.67-5-10-5z"
+        />
+      </Svg>
+    );
   };
 
   // const LocationDropdown = ({ locations }) => {
@@ -398,6 +431,7 @@ const GroHomeScreen = ({ navigation, route }) => {
   }
 
   const fetchBCoinData = async () => {
+    // console.log("PRRRRR")
     try {
       let res = await getBCoin()
       setBCoin(res.btokenDetails)
@@ -588,9 +622,9 @@ const GroHomeScreen = ({ navigation, route }) => {
         start={{ x: 0, y: 0 }}
         end={{ x: 0, y: 1 }}
         // colors={[item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange, colours.kapraWhite]}
-        colors={['#d08785', '#d08785', colours.kapraWhite]}
+        colors={['#d08785', '#d08785', '#d08785', '#d08785', colours.kapraWhite, colours.kapraWhite]}
         style={profile.isPrime === true ? (
-          { width: windowWidth, height: windowHeight * (45.5 / 100), justifyContent: 'flex-end', alignItems: 'center' }
+          { width: windowWidth, height: windowHeight * (44.5 / 100), justifyContent: 'flex-end', alignItems: 'center' }
         ) : (
           { width: windowWidth, height: windowHeight * (42.5 / 100), justifyContent: 'flex-end', alignItems: 'center' }
         )}
@@ -612,13 +646,36 @@ const GroHomeScreen = ({ navigation, route }) => {
     );
   };
 
-  const _renderMainBanner1 = ({ item, index }) => {
+  const _renderMainBanner1 = ({ item, index, count }) => {
     return (
       <TouchableOpacity
         onPress={() => onpress(item)}
       >
         <FastImage
-          style={[styles.bannerImage]}
+          style={[styles.bannerImage, {
+            width: count > 1 ? windowWidth * (85 / 100) : windowWidth,
+            height: windowWidth * (55 / 100)
+          }]}
+          source={{
+            uri: getImage(item?.imageUrl),
+            priority: FastImage.priority.high,
+          }}
+          resizeMode={FastImage.resizeMode.contain}
+        />
+      </TouchableOpacity>
+    );
+  };
+
+  const _renderMainBanner2 = ({ item, index }) => {
+    return (
+      <TouchableOpacity
+        onPress={() => onpress(item)}
+      >
+        <FastImage
+          style={[styles.bannerImage, {
+            width: windowWidth,
+            height: windowWidth * (55 / 100)
+          }]}
           source={{
             uri: getImage(item?.imageUrl),
             priority: FastImage.priority.high,
@@ -669,26 +726,84 @@ const GroHomeScreen = ({ navigation, route }) => {
           </View> */}
 
           {/* Location Con  */}
-          <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
-            <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} />
-            <TouchableOpacity style={styles.searchConBtn}
+          <View style={styles.headerSwitchContainer}>
+            {/* <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} /> */}
+            <PincodeChange fun={_fetchHomeData} Width={wp('18%')} />
+            {/* <TouchableOpacity style={styles.searchConBtn}
               onPress={() => profile.groceryCustId ? navigation.navigate('GroReferralScreen') : Toast.show('Please Login!')}>
               {showIcon('share', colours.primaryWhite, windowWidth * (6 / 100))}
-            </TouchableOpacity>
-            {profile.isPrime !== true ? (<TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
-              {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
+            </TouchableOpacity> */}
+            {profile.isPrime !== true ? (
+              //   <TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
+              //   {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
 
-              {GroWishCount > 0 && (
-                <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
-              )}
-            </TouchableOpacity>
-            ) : (<Image
-              source={require('../../assets/images/primebadge.png')}
-              style={{
-                height: windowWidth * (16 / 100),
-                width: windowWidth * (16 / 100),
-                // resizeMode: 'contain',
-              }} />
+              //   {GroWishCount > 0 && (
+              //     <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
+              //   )}
+              // </TouchableOpacity>
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: wp('1%')
+              }}>
+                <TouchableOpacity onPress={() => navigation.navigate('GroBCoinScreen')} style={styles.bcoinContainer}>
+                  <Image style={styles.rupeeImageOne} source={require('../../assets/icons/normal_rupee.png')} />
+                  <LinearGradient
+                    colors={['#311C00', '#000000']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.badge}
+                  >
+                    <Text style={styles.bcoinTextTwo}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                  </LinearGradient>
+
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("GroProfileScreen")}>
+                  <Image source={require('../../assets/icons/user.png')} style={{
+                    height: wp('9%'),
+                    width: wp('9%')
+                  }} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              // <Image
+              //   source={require('../../assets/images/primebadge.png')}
+              //   style={{
+              //     height: windowWidth * (16 / 100),
+              //     width: windowWidth * (16 / 100),
+              //     // resizeMode: 'contain',
+              //   }} />
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: wp('1%')
+              }}>
+                <TouchableOpacity onPress={() => navigation.navigate("GroBCoinScreen")} style={styles.bcoinContainer}>
+
+                  <Image style={styles.rupeeImageTwo} source={require('../../assets/icons/premium_rupee.png')} />
+                  <LinearGradient
+                    colors={['#FDED94', '#DEC32B']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.badge}
+                  >
+                    <Text style={styles.bcoinText}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                  </LinearGradient>
+
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                  // navigation.navigate('LoginScreen')
+                  // navigation.navigate('RegistraionScreen')
+                  // navigation.navigate('OtpScreen')
+                  navigation.navigate('GroProfileScreen')
+                  // navigation.navigate('ProfileScreen')
+                }} style={styles.profileIconMainView}>
+                  <Image source={require('../../assets/icons/crown.png')} width={wp('6.3%')} height={hp('2.6%')} />
+                  <View style={styles.profileIconView}>
+                    <GradientUserIcon size={wp('6%')} />
+                  </View>
+                </TouchableOpacity>
+              </View>
             )}
 
           </View>
@@ -804,26 +919,84 @@ const GroHomeScreen = ({ navigation, route }) => {
           </View> */}
 
           {/* Location Con  */}
-          <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
-            <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} />
-            <TouchableOpacity style={styles.searchConBtn}
+          <View style={styles.headerSwitchContainer}>
+            {/* <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} /> */}
+            <PincodeChange fun={_fetchHomeData} Width={wp('18%')} />
+            {/* <TouchableOpacity style={styles.searchConBtn}
               onPress={() => profile.groceryCustId ? navigation.navigate('GroReferralScreen') : Toast.show('Please Login!')}>
               {showIcon('share', colours.primaryWhite, windowWidth * (6 / 100))}
-            </TouchableOpacity>
-            {profile.isPrime !== true ? (<TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
-              {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
+            </TouchableOpacity> */}
+            {profile.isPrime !== true ? (
+              // <TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
+              //   {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
 
-              {GroWishCount > 0 && (
-                <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
-              )}
-            </TouchableOpacity>
-            ) : (<Image
-              source={require('../../assets/images/primebadge.png')}
-              style={{
-                height: windowWidth * (16 / 100),
-                width: windowWidth * (16 / 100),
-                // resizeMode: 'contain',
-              }} />
+              //   {GroWishCount > 0 && (
+              //     <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
+              //   )}
+              // </TouchableOpacity>
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: wp('1%')
+              }}>
+                <TouchableOpacity onPress={() => navigation.navigate('GroBCoinScreen')} style={styles.bcoinContainer}>
+                  <Image style={styles.rupeeImageOne} source={require('../../assets/icons/normal_rupee.png')} />
+                  <LinearGradient
+                    colors={['#311C00', '#000000']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.badge}
+                  >
+                    <Text style={styles.bcoinTextTwo}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                  </LinearGradient>
+
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.navigate("GroProfileScreen")}>
+                  <Image source={require('../../assets/icons/user.png')} style={{
+                    height: wp('9%'),
+                    width: wp('9%')
+                  }} />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              // <Image
+              //   source={require('../../assets/images/primebadge.png')}
+              //   style={{
+              //     height: windowWidth * (16 / 100),
+              //     width: windowWidth * (16 / 100),
+              //     // resizeMode: 'contain',
+              //   }} />
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginRight: wp('1%')
+              }}>
+                <TouchableOpacity onPress={() => navigation.navigate("GroBCoinScreen")} style={styles.bcoinContainer}>
+
+                  <Image style={styles.rupeeImageTwo} source={require('../../assets/icons/premium_rupee.png')} />
+                  <LinearGradient
+                    colors={['#FDED94', '#DEC32B']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.badge}
+                  >
+                    <Text style={styles.bcoinText}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                  </LinearGradient>
+
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {
+                  // navigation.navigate('LoginScreen')
+                  // navigation.navigate('RegistraionScreen')
+                  // navigation.navigate('OtpScreen')
+                  navigation.navigate('GroProfileScreen')
+                  // navigation.navigate('ProfileScreen')
+                }} style={styles.profileIconMainView}>
+                  <Image source={require('../../assets/icons/crown.png')} width={wp('6.3%')} height={hp('2.6%')} />
+                  <View style={styles.profileIconView}>
+                    <GradientUserIcon size={wp('6%')} />
+                  </View>
+                </TouchableOpacity>
+              </View>
             )}
 
           </View>
@@ -941,26 +1114,84 @@ const GroHomeScreen = ({ navigation, route }) => {
         </View> */}
 
         {/* Location Con  */}
-        <View style={profile.isPrime === true ? [styles.headerSwitchContainer, { marginVertical: windowWidth * (3 / 100) }] : styles.headerSwitchContainer}>
-          <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} />
-          <TouchableOpacity style={styles.searchConBtn}
+        <View style={styles.headerSwitchContainer}>
+          {/* <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 66 : 70} /> */}
+          <PincodeChange fun={_fetchHomeData} Width={wp('18%')} />
+          {/* <TouchableOpacity style={styles.searchConBtn}
             onPress={() => profile.groceryCustId ? navigation.navigate('GroReferralScreen') : Toast.show('Please Login!')}>
             {showIcon('share', colours.primaryWhite, windowWidth * (6 / 100))}
-          </TouchableOpacity>
-          {profile.isPrime !== true ? (<TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
-            {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
+          </TouchableOpacity> */}
+          {profile.isPrime !== true ? (
+            // <TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
+            //   {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
 
-            {GroWishCount > 0 && (
-              <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
-            )}
-          </TouchableOpacity>
-          ) : (<Image
-            source={require('../../assets/images/primebadge.png')}
-            style={{
-              height: windowWidth * (16 / 100),
-              width: windowWidth * (16 / 100),
-              // resizeMode: 'contain',
-            }} />
+            //   {GroWishCount > 0 && (
+            //     <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
+            //   )}
+            // </TouchableOpacity>
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginRight: wp('1%')
+            }}>
+              <TouchableOpacity onPress={() => navigation.navigate('GroBcoinScreen')} style={styles.bcoinContainer}>
+                <Image style={styles.rupeeImageOne} source={require('../../assets/icons/normal_rupee.png')} />
+                <LinearGradient
+                  colors={['#311C00', '#000000']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.badge}
+                >
+                  <Text style={styles.bcoinTextTwo}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                </LinearGradient>
+
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => navigation.navigate("GroProfileScreen")}>
+                <Image source={require('../../assets/icons/user.png')} style={{
+                  height: wp('9%'),
+                  width: wp('9%')
+                }} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            // <Image
+            //   source={require('../../assets/images/primebadge.png')}
+            //   style={{
+            //     height: windowWidth * (16 / 100),
+            //     width: windowWidth * (16 / 100),
+            //     // resizeMode: 'contain',
+            //   }} />
+            <View style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              marginRight: wp('1%')
+            }}>
+              <TouchableOpacity onPress={() => navigation.navigate("GroBCoinScreen")} style={styles.bcoinContainer}>
+
+                <Image style={styles.rupeeImageTwo} source={require('../../assets/icons/premium_rupee.png')} />
+                <LinearGradient
+                  colors={['#FDED94', '#DEC32B']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.badge}
+                >
+                  <Text style={styles.bcoinText}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                </LinearGradient>
+
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => {
+                // navigation.navigate('LoginScreen')
+                // navigation.navigate('RegistraionScreen')
+                // navigation.navigate('OtpScreen')
+                navigation.navigate('GroProfileScreen')
+                // navigation.navigate('ProfileScreen')
+              }} style={styles.profileIconMainView}>
+                <Image source={require('../../assets/icons/crown.png')} width={wp('6.3%')} height={hp('2.6%')} />
+                <View style={styles.profileIconView}>
+                  <GradientUserIcon size={wp('6%')} />
+                </View>
+              </TouchableOpacity>
+            </View>
           )}
 
         </View>
@@ -1051,7 +1282,7 @@ const GroHomeScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-
+      {/* {console.log('bCoin......', bCoin)} */}
       {/* Switch Con  */}
       {
         headerShow ?
@@ -1163,7 +1394,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         </View> */}
 
         <View style={profile.isPrime === true ? [styles.CarouselCon, {
-          height: windowHeight * (42 / 100),
+          height: windowHeight * (41 / 100),
         }] : [styles.CarouselCon, { height: windowHeight * (39 / 100) }]}>
           <Carousel
             autoplay
@@ -1178,6 +1409,7 @@ const GroHomeScreen = ({ navigation, route }) => {
             autoplayInterval={4000}
             enableMomentum={true}
           />
+          <Image style={styles.headerCurves} source={require('../../assets/images/curves.png')} />
           <View style={{ position: 'absolute', width: windowWidth, alignItems: 'center', top: hp('2%') }}>
 
             {/* Switch  */}
@@ -1213,28 +1445,85 @@ const GroHomeScreen = ({ navigation, route }) => {
               <Text style={styles.timeText}>20 min</Text>
               <View style={{
                 flexDirection: 'row',
-                alignItems: 'center'
+                alignItems: 'center',
+                marginRight: wp('1%')
               }}>
-                <TouchableOpacity style={styles.searchConBtn}
+                {/* <TouchableOpacity style={styles.searchConBtn}
                   onPress={() => profile.groceryCustId ? navigation.navigate('GroReferralScreen') : Toast.show('Please Login!')}>
                   {showIcon('share', colours.primaryWhite, windowWidth * (6 / 100))}
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 {profile.isPrime !== true ? (
-                  <TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
-                    {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
+                  // <TouchableOpacity style={styles.searchConBtn} onPress={() => navigation.navigate('GroWishListScreen')}>
+                  //   {showIcon('heart', colours.primaryWhite, windowWidth * (6 / 100))}
 
-                    {GroWishCount > 0 && (
-                      <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
-                    )}
-                  </TouchableOpacity>
-                ) : (<Image
-                  source={require('../../assets/images/primebadge.png')}
-                  style={{
-                    height: windowWidth * (16 / 100),
-                    width: windowWidth * (16 / 100),
-                    // resizeMode: 'contain',
-                  }} />)}
+                  //   {GroWishCount > 0 && (
+                  //     <Badge value={GroWishCount} status="error" containerStyle={{ position: 'absolute', top: 5, right: 0 }} />
+                  //   )}
+                  // </TouchableOpacity>
+                  <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    // marginRight: wp('5%')
+                  }}>
+                    <TouchableOpacity onPress={() => navigation.navigate('GroBCoinScreen')} style={styles.bcoinContainer}>
+                      <Image style={styles.rupeeImageOne} source={require('../../assets/icons/normal_rupee.png')} />
+                      <LinearGradient
+                        colors={['#311C00', '#000000']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.badge}
+                      >
+                        <Text style={styles.bcoinTextTwo}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                      </LinearGradient>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate("GroProfileScreen")}>
+                      <Image source={require('../../assets/icons/user.png')} style={{
+                        height: wp('9%'),
+                        width: wp('9%')
+                      }} />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  // <Image
+                  //   source={require('../../assets/images/primebadge.png')}
+                  //   style={{
+                  //     height: windowWidth * (16 / 100),
+                  //     width: windowWidth * (16 / 100),
+                  //     // resizeMode: 'contain',
+                  //   }} />
+                  <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center'
+                  }}>
+                    <TouchableOpacity onPress={() => navigation.navigate("GroBCoinScreen")} style={styles.bcoinContainer}>
+
+                      <Image style={styles.rupeeImageTwo} source={require('../../assets/icons/premium_rupee.png')} />
+                      <LinearGradient
+                        colors={['#FDED94', '#DEC32B']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.badge}
+                      >
+                        <Text style={styles.bcoinText}>{Number(bCoin?.[0]?.BCoinBalance).toFixed(1)} B</Text>
+                      </LinearGradient>
+
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                      // navigation.navigate('LoginScreen')
+                      // navigation.navigate('RegistraionScreen')
+                      // navigation.navigate('OtpScreen')
+                      navigation.navigate('GroProfileScreen')
+                      // navigation.navigate('ProfileScreen')
+                    }} style={styles.profileIconMainView}>
+                      <Image source={require('../../assets/icons/crown.png')} width={wp('6.3%')} height={hp('2.6%')} />
+                      <View style={styles.profileIconView}>
+                        <GradientUserIcon size={wp('6%')} />
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </View>
             {/* Location Con  */}
@@ -1264,9 +1553,11 @@ const GroHomeScreen = ({ navigation, route }) => {
               width: windowWidth,
               paddingHorizontal: windowWidth * (5 / 100),
               // bottom: hp('3%')
-              bottom: profile.isPrime === true ? hp('3%') : hp('2%')
+              bottom: hp('1%')
             }}>
-              <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 64 : 68} />
+              {/* <PincodeChange fun={_fetchHomeData} Width={profile.isPrime === true ? 64 : 68} /> */}
+              {/* <PincodeChange fun={_fetchHomeData} Width={wp('18%')} /> */}
+              <PincodeChange fun={_fetchHomeData} Width={wp('17%')} />
             </View>
             {/* Search Con  */}
             <TouchableOpacity style={styles.searchContainer} onPress={() => navigation.navigate('GroSearchModalScreen')}>
@@ -1289,7 +1580,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         </View>
 
         {/* B coin dicount text  */}
-        {
+        {/* {
           bCoin && bCoin[0]?.BCoinBalance > 0 && (
             <View style={styles.bCoinDiscountCon}>
               <View style={{ width: windowWidth * (60 / 100) }}>
@@ -1309,7 +1600,7 @@ const GroHomeScreen = ({ navigation, route }) => {
               </View>
             </View>
           )
-        }
+        } */}
 
         {/* ReOrder Con  */}
         {
@@ -1531,7 +1822,11 @@ const GroHomeScreen = ({ navigation, route }) => {
         {/* Latest Product */}
         {
           latestArrivalData && latestArrivalData.length > 0 && (
-            <View style={{ width: windowWidth, alignItems: 'center' }}>
+            <ImageBackground source={require('../../assets/images/curve.png')} style={{
+              width: windowWidth,
+              alignItems: 'center',
+              paddingTop: hp('2%')
+            }}>
               <View style={styles.headerNameCon}>
                 <Text style={styles.fontStyle3}>Latest Product</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Latest Arrival' })} style={styles.viewAllContainer}>
@@ -1632,7 +1927,7 @@ const GroHomeScreen = ({ navigation, route }) => {
                 // }
                 keyExtractor={(item, index) => index.toString()}
               />
-            </View>
+            </ImageBackground>
           )
         }
 
@@ -1705,11 +2000,11 @@ const GroHomeScreen = ({ navigation, route }) => {
         } */}
 
         {/* Banner 1  */}
-        <View style={styles.CarouselCon}>
+        {/* <View style={styles.CarouselCon}>
           <Carousel
             autoplay
             data={data.OfferZone12}
-            renderItem={_renderMainBanner1}
+            renderItem={_renderMainBanner2}
             sliderWidth={windowWidth}
             itemWidth={windowWidth}
             loop={true}
@@ -1717,7 +2012,7 @@ const GroHomeScreen = ({ navigation, route }) => {
             enableMomentum={true}
             decelerationRate={0.9}
           />
-        </View>
+        </View> */}
 
         {/* Featured Product  */}
         {/* {
@@ -1790,7 +2085,11 @@ const GroHomeScreen = ({ navigation, route }) => {
 
         {
           featuredData && featuredData.length > 0 && (
-            <View style={{ width: windowWidth, alignItems: 'center' }}>
+            <ImageBackground source={require('../../assets/images/curve.png')} style={{
+              width: windowWidth,
+              alignItems: 'center',
+              paddingTop: hp('2%')
+            }}>
               <View style={styles.headerNameCon}>
                 <Text style={styles.fontStyle3}>Featured Product</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Featured Product' })} style={styles.viewAllContainer}>
@@ -1890,7 +2189,7 @@ const GroHomeScreen = ({ navigation, route }) => {
                 // }
                 keyExtractor={(item, index) => index.toString()}
               />
-            </View>
+            </ImageBackground>
           )
         }
 
@@ -1899,15 +2198,34 @@ const GroHomeScreen = ({ navigation, route }) => {
           <Carousel
             autoplay
             data={data.MobilePromoFull}
-            renderItem={_renderMainBanner1}
+            renderItem={({ item, index }) =>
+              _renderMainBanner1({
+                item,
+                index,
+                count: data.MobilePromoFull.length,
+              })
+            }
             sliderWidth={windowWidth}
-            itemWidth={windowWidth}
+            // itemWidth={windowWidth}
+            itemWidth={data.MobilePromoFull.length > 1 ? windowWidth * 0.85 : windowWidth}
             loop={true}
             enableSnap={true}
             enableMomentum={true}
             decelerationRate={0.9}
+            onSnapToItem={index => setActiveIndexOne(index)}
+            activeSlideAlignment="center"
           />
         </View>
+        {data.MobilePromoFull.length > 1 && (
+          <Pagination
+            dotsLength={data.MobilePromoFull.length}
+            activeDotIndex={activeIndexOne}
+            dotStyle={styles.dot}
+            inactiveDotStyle={styles.inactiveDot}
+            inactiveDotOpacity={0.4}
+            inactiveDotScale={0.8}
+          />
+        )}
 
         {/* Popular Product  */}
         {/* {
@@ -1980,7 +2298,11 @@ const GroHomeScreen = ({ navigation, route }) => {
 
         {
           popularData && popularData.length > 0 && (
-            <View style={{ width: windowWidth, alignItems: 'center' }}>
+            <ImageBackground source={require('../../assets/images/curve.png')} style={{
+              width: windowWidth,
+              alignItems: 'center',
+              paddingTop: hp('2%')
+            }}>
               <View style={styles.headerNameCon}>
                 <Text style={styles.fontStyle3}>Popular Product</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Popular Product' })} style={styles.viewAllContainer}>
@@ -2081,7 +2403,7 @@ const GroHomeScreen = ({ navigation, route }) => {
                 // }
                 keyExtractor={(item, index) => index.toString()}
               />
-            </View>
+            </ImageBackground>
           )
         }
 
@@ -2091,16 +2413,34 @@ const GroHomeScreen = ({ navigation, route }) => {
           <Carousel
             autoplay
             data={data.NewArrivals}
-            renderItem={_renderMainBanner1}
+            // renderItem={_renderMainBanner1(data.NewArrivals.length)}
+            renderItem={({ item, index }) =>
+              _renderMainBanner1({
+                item,
+                index,
+                count: data.NewArrivals.length,
+              })
+            }
             sliderWidth={windowWidth}
-            itemWidth={windowWidth}
+            // itemWidth={windowWidth}
+            itemWidth={data.NewArrivals.length > 1 ? windowWidth * 0.85 : windowWidth}
             loop={true}
             enableSnap={true}
             enableMomentum={true}
             decelerationRate={0.9}
-          />
+            onSnapToItem={index => setActiveIndexTwo(index)}
+            activeSlideAlignment="center" />
         </View>
-
+        {data.NewArrivals.length > 1 && (
+          <Pagination
+            dotsLength={data.NewArrivals.length}
+            activeDotIndex={activeIndexTwo}
+            dotStyle={styles.dot}
+            inactiveDotStyle={styles.inactiveDot}
+            inactiveDotOpacity={0.4}
+            inactiveDotScale={0.8}
+          />
+        )}
 
         {/* Recommended Products  */}
         {/* {
@@ -2149,7 +2489,11 @@ const GroHomeScreen = ({ navigation, route }) => {
 
         {
           popularData && popularData.length > 0 && (
-            <View style={{ width: windowWidth, alignItems: 'center' }}>
+            <ImageBackground source={require('../../assets/images/curve.png')} style={{
+              width: windowWidth,
+              alignItems: 'center',
+              paddingTop: hp('2%')
+            }}>
               <View style={styles.headerNameCon}>
                 <Text style={styles.fontStyle3}>Recommended Products</Text>
                 {/* <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Popular Product' })} style={styles.viewAllContainer}>
@@ -2250,7 +2594,7 @@ const GroHomeScreen = ({ navigation, route }) => {
                 // }
                 keyExtractor={(item, index) => index.toString()}
               />
-            </View>
+            </ImageBackground>
           )
         }
 
@@ -2260,15 +2604,36 @@ const GroHomeScreen = ({ navigation, route }) => {
           <Carousel
             autoplay
             data={data.MustTryProducts}
-            renderItem={_renderMainBanner1}
+            // renderItem={_renderMainBanner1}
+            renderItem={({ item, index }) =>
+              _renderMainBanner1({
+                item,
+                index,
+                count: data.MustTryProducts.length,
+              })
+            }
             sliderWidth={windowWidth}
-            itemWidth={windowWidth}
+            // itemWidth={windowWidth}
+            itemWidth={data.MustTryProducts.length > 1 ? windowWidth * 0.85 : windowWidth}
             loop={true}
             enableSnap={true}
             enableMomentum={true}
             decelerationRate={0.9}
-          />
+            onSnapToItem={index => setActiveIndexThree(index)}
+            activeSlideAlignment="center" />
         </View>
+        {
+          data.MustTryProducts.length > 1 && (
+            <Pagination
+              dotsLength={data.MustTryProducts.length}
+              activeDotIndex={activeIndexThree}
+              dotStyle={styles.dot}
+              inactiveDotStyle={styles.inactiveDot}
+              inactiveDotOpacity={0.4}
+              inactiveDotScale={0.8}
+            />
+          )
+        }
 
         {/* Recently Viewed Products  */}
         {/* {
@@ -2317,7 +2682,11 @@ const GroHomeScreen = ({ navigation, route }) => {
 
         {
           recentData && recentData.length > 0 && (
-            <View style={{ width: windowWidth, alignItems: 'center' }}>
+            <ImageBackground source={require('../../assets/images/curve.png')} style={{
+              width: windowWidth,
+              alignItems: 'center',
+              paddingTop: hp('2%')
+            }}>
               <View style={styles.headerNameCon}>
                 <Text style={styles.fontStyle3}>Recently Viewed Products</Text>
                 {/* <TouchableOpacity onPress={() => navigation.navigate('GroCategoryArchiveScreen', { type: 'Popular Product' })} style={styles.viewAllContainer}>
@@ -2418,7 +2787,7 @@ const GroHomeScreen = ({ navigation, route }) => {
                 // }
                 keyExtractor={(item, index) => index.toString()}
               />
-            </View>
+            </ImageBackground>
           )
         }
 
@@ -2427,15 +2796,36 @@ const GroHomeScreen = ({ navigation, route }) => {
           <Carousel
             autoplay
             data={data.SpecialOffers}
-            renderItem={_renderMainBanner1}
+            // renderItem={_renderMainBanner1}
+            renderItem={({ item, index }) =>
+              _renderMainBanner1({
+                item,
+                index,
+                count: data.SpecialOffers.length,
+              })
+            }
             sliderWidth={windowWidth}
-            itemWidth={windowWidth}
+            itemWidth={data.SpecialOffers.length > 1 ? windowWidth * 0.85 : windowWidth}
+            // itemWidth={windowWidth * 0.85}
             loop={true}
             enableSnap={true}
             enableMomentum={true}
             decelerationRate={0.9}
+            onSnapToItem={index => setActiveIndexFour(index)}
+            activeSlideAlignment="center"
           />
         </View>
+        {data.SpecialOffers.length > 1 && (
+          <Pagination
+            dotsLength={data.SpecialOffers.length}
+            activeDotIndex={activeIndexFour}
+            dotStyle={styles.dot}
+            inactiveDotStyle={styles.inactiveDot}
+            inactiveDotOpacity={0.4}
+            inactiveDotScale={0.8}
+          />
+        )
+        }
 
 
         {/* Hot Deals on brands */}
@@ -2486,7 +2876,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         {/* Feedback */}
         <TouchableOpacity onPress={() => navigation.navigate('GroWriteToUsScreen')}>
           <FastImage
-            style={{ width: windowWidth, height: windowWidth * (45 / 100), marginTop: 15 }}
+            style={{ width: windowWidth, height: windowWidth * (45 / 100) }}
             source={require('../../assets/images/SugPro.png')}
             resizeMode={FastImage.resizeMode.contain}
           />
@@ -3084,7 +3474,78 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-ExtraBold',
     color: "#FFFFFF",
     fontSize: wp('6%'),
-  }
+  },
+  profileIconMainView: {
+    alignItems: "center",
+    // top: hp("-1.1%")
+  },
+  profileIconView: {
+    width: wp('8.8%'),
+    height: wp('8.8%'),
+    borderRadius: wp('7.5%'),
+    borderColor: "#D2B200",
+    borderWidth: wp("0.3%"),
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    top: hp("-1.1%")
+  },
+  bcoinContainer: {
+    alignItems: 'center',
+    width: wp('20%'),
+  },
+  rupeeImageTwo: {
+    width: hp('3%'),
+    height: hp('3%'),
+    bottom: hp('-0.4%')
+  },
+  badge: {
+    width: wp('14%'),
+    height: hp('2.1%'),
+    borderRadius: wp('4%'),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: -hp('1%'),
+
+    shadowColor: '#744700',
+    shadowOpacity: 0.5,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: -1 },
+    elevation: 3,
+  },
+  bcoinText: {
+    color: '#000000',
+    fontSize: wp('3%'),
+    fontFamily: 'Poppins-Bold',
+  },
+  rupeeImageOne: {
+    width: hp('3%'),
+    height: hp('3%'),
+    bottom: hp('-0.5%')
+  },
+  bcoinTextTwo: {
+    color: '#FFBA33',
+    fontSize: wp('3%'),
+    fontFamily: 'Poppins-Bold',
+  },
+  headerCurves: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: wp('33%'),
+    height: wp('33%'),
+    resizeMode: 'contain',
+  },
+  dot: {
+    width: wp("2.32%"),
+    height: wp("2.32%"),
+    backgroundColor: "#F25000",
+    borderRadius: 30,
+    // bottom: windowWidth * (0.2)
+  },
+  inactiveDot: {
+    backgroundColor: '#FFC4A3',
+  },
 });
 
 

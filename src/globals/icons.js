@@ -89,9 +89,9 @@ import others from '../assets/icons/others.png'
 import work from '../assets/icons/work.png'
 import rightTickRound from '../assets/icons/rightTickRound.png'
 import shop from '../assets/icons/shop.png'
-
-
-
+import homeTwo from '../assets/icons/home-two.png'
+import grid from '../assets/icons/grid.png'
+import heartTwo from '../assets/icons/heart-two.png'
 import { Icon, SearchBar, Badge } from 'react-native-elements';
 import { AppContext } from '../Context/appContext';
 
@@ -293,9 +293,9 @@ const showIcon = (icon, color = colours.black, size = 24, TAB) => {
     case 'sidemenu':
       src = menu;
       break;
-      case 'menu1':
-        src = menu1;
-        break;
+    case 'menu1':
+      src = menu1;
+      break;
     case 'rightarrow':
       src = rightarrow;
       break;
@@ -364,6 +364,15 @@ const showIcon = (icon, color = colours.black, size = 24, TAB) => {
       break;
     case 'mathminus':
       src = mathminus;
+      break;
+    case 'homeTwo':
+      src = homeTwo;
+      break;
+    case 'heartTwo':
+      src = heartTwo;
+      break;
+    case 'grid':
+      src = grid;
       break;
     default:
       src = shoppingbag;

@@ -262,7 +262,7 @@ const GroLoginOtpScreen = ({ navigation }) => {
                     <View style={styles.bottomContainer}>
                         <Text style={styles.headerText}>Login</Text>
 
-                        <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')} style={styles.phoneNoEditContainer}>
+                        <TouchableOpacity onPress={() => navigation.navigate('GroLoginScreenNew')} style={styles.phoneNoEditContainer}>
                             <Text style={styles.phoneNoText}>{phone}</Text>
                             <Image
                                 style={

@@ -43,6 +43,7 @@ import GroLocationFetch from '../screens/GroLocationFetch';
 import TestScreen from '../screens/TestScreen';
 
 import GroMyTabs from './TabNavigator';
+import GroProfileScreen from '../screens/GroProfileScreen';
 import GroLocationFetchNew from '../screens/GroLocationFetchNew';
 import GroLoginOtpScreen from '../screens/GroLoginOtpScreen';
 import GroLoginScreenThree from '../screens/GroLoginScreenThree';
@@ -61,6 +62,7 @@ export default function HomeStackNavigator() {
       <Stack.Screen name="GroHomeScreen" component={GroMyTabs} />
       <Stack.Screen name="BuyerzHomeScreen" component={BuyerzHomeScreen} />
       <Stack.Screen name="GroCartScreen" component={GroCartScreen} />
+      <Stack.Screen name="GroProfileScreen" component={GroProfileScreen} />
       <Stack.Screen name="GroBCoinScreen" component={GroBCoinScreen} />
       <Stack.Screen name="GroCategoryScreen" component={GroCategoryScreen} />
       <Stack.Screen name="GroShopByCategoryScreen" component={GroShopByCategoryScreen} />
