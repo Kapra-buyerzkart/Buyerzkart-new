@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ImageBackground, Image, TextInput, TouchableOpacity, KeyboardAvoidingView, ScrollView, Alert, ActivityIndicator, Platform } from 'react-native'
 import React, { useState } from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen'
 import { useNavigation } from '@react-navigation/native'
 import { checkPhone, sendLoginOtp } from '../api'   // ✅ both APIs
@@ -9,6 +9,7 @@ const GroLoginScreenNew = () => {
     const navigation = useNavigation()
     const [phone, setPhone] = useState('');
     const [loading, setLoading] = useState(false);
+    const insets = useSafeAreaInsets()
 
     const handleContinue = async () => {
         if (phone.length !== 10) {
@@ -55,7 +56,12 @@ const GroLoginScreenNew = () => {
     return (
         <SafeAreaView style={styles.mainContainer}>
             <KeyboardAvoidingView
-                style={{ flex: 1 }}
+                style={Platform.OS === 'android' ? {
+                    flex: 1,
+                    paddingBottom: insets.bottom
+                } : {
+                    flex: 1,
+                }}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
                 <ScrollView
@@ -173,7 +179,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: 'center',
         borderRadius: wp('2.33%'),
-        marginTop: hp('5%')
+        marginTop: hp('5%'),
     },
     continueButtonText: {
         fontFamily: 'Poppins-Bold',

@@ -71,7 +71,7 @@ export default function FooterCart({ navigation, Absolute }) {
                 </TouchableOpacity>
 
 
-                <TouchableOpacity style={styles.iconCon}  onPress={() => Linking.openURL('whatsapp://send?text=Hi Kapra Daily..&phone=+919539701110')} >
+                <TouchableOpacity style={styles.iconCon}  onPress={() => Linking.openURL('whatsapp://send?text=Hi Kapra Daily..&phone=+919048801110')} >
                     <View style={styles.iconStyle}>
                     {showIcon('whatsapp', colours.kapraBlackLow, windowWidth * (4 / 100))}
                     </View>

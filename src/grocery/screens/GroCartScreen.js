@@ -215,7 +215,7 @@ const GroCartScreen = ({ navigation, route }) => {
 
             Alert.alert(
               'ALERT',
-              `To ensure the best delivery experience, we've automatically selected the available delivery address for you. You can proceed with this address or cancel to add more address and choose from your saved addresses.`,
+              `To ensure the best delivery experience, we've automatically selected the available delivery address for you. You can proceed with this address or cancel to add more address and choose from your saved addresses.\n\nനിങ്ങളുടെ ഏറ്റവും അടുത്തുള്ള അഡ്രസ് ഞങ്ങൾ ഓട്ടോമാറ്റിക്കായി സെലക്ട് ചെയ്തിട്ടുണ്ട്. സ്ഥിതീകരിക്കാൻ 'OK'  ക്ലിക്ക് ചെയ്യുക. ഈ അഡ്രസ് മാറ്റുവാനോ പുതിയ അഡ്രസ്സ് ചേർക്കാനോ 'CANCEL' ക്ലിക്ക് ചെയ്ത് നിങ്ങളുടെ സേവ് ചെയ്ത വിലാസങ്ങളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക.`,
               [
                 {
                   text: 'Cancel',
@@ -419,9 +419,6 @@ const GroCartScreen = ({ navigation, route }) => {
     }
   };
 
-  // useEffect(() => {
-  //   checkProductAvailability()
-  // }, [])
 
   const AddtoCart = async (URLKey) => {
     try {
@@ -1378,7 +1375,7 @@ const GroCartScreen = ({ navigation, route }) => {
             reducedTransparencyFallbackColor='black'
           />
           <Pressable onPress={() => setDeliveryOptionModal(false)} style={{ height: windowHeight * (25 / 100), width: windowWidth }} />
-          <View style={[styles.commonModalStyle, { paddingBottom: windowHeight * (5 / 100), height: windowHeight * (75 / 100), marginTop: 0 }]}>
+          <View style={[styles.commonModalStyle, { paddingBottom: windowHeight * (5 / 100) + insets.bottom, height: windowHeight * (75 / 100), marginTop: 0 }]}>
 
             <View style={styles.modalHeader}>
               <Text style={[styles.fontStyle1, { color: colours.primaryWhite }]} >

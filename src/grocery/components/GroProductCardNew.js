@@ -206,11 +206,11 @@ export default function GroProductCardNew({
                                 <Text style={[styles.mrpText, {
                                     textDecorationLine: "line-through",
                                     textDecorationColor: "#777777"
-                                }]}>₹{SpecialPrice}</Text>
+                                }]}>₹{Price}</Text>
 
                             </View>
                             <View style={styles.priceView}>
-                                <Text style={styles.priceText}>₹{Price}</Text>
+                                <Text style={styles.priceText}>₹{SpecialPrice}</Text>
                             </View>
                         </>
                     ) : (

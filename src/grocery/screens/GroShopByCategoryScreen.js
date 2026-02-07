@@ -36,6 +36,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import GroProductCard1 from '../components/GroProductCard1';
 import FooterCart from '../components/FooterCart';
 import AuthButton from '../components/AuthButton';
+import FooterCartNew from '../components/FooterCartNew';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -462,7 +463,7 @@ const GroShopByCategoryScreen = ({ navigation, route }) => {
       </View>
 
       {/* Cart Con  */}
-      <FooterCart navigation={navigation} Absolute />
+      <FooterCartNew navigation={navigation} />
 
     </SafeAreaView>
   );

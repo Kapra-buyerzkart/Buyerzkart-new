@@ -42,56 +42,56 @@ export default function Splash({ navigation }) {
                             ],
                         })
                     )
-            }, 3000)
+            }, 2500)
         }
         asynceffect();
     }, []);
 
     return (
-        <SafeAreaView style={styles.mainContainer}>
-            <Animatable.View animation="zoomIn" iterationCount={1} direction="alternate" >
-                <Image
-                    source={require('../assets/logo/logo.png')}
-                    style={{
-                        height: windowHeight,
-                        width: windowWidth * (80 / 100),
-                        resizeMode: 'contain',
-                    }}
-                />
-            </Animatable.View>
-        </SafeAreaView>
-        // <SafeAreaView style={styles.container}>
-        //     <FastImage
-        //         source={require('../assets/gifs/splash.gif')}
-        //         style={styles.gif}
-        //         resizeMode={FastImage.resizeMode.contain}
-        //     />
+        // <SafeAreaView style={styles.mainContainer}>
+        //     <Animatable.View animation="zoomIn" iterationCount={1} direction="alternate" >
+        //         <Image
+        //             source={require('../assets/logo/logo.png')}
+        //             style={{
+        //                 height: windowHeight,
+        //                 width: windowWidth * (80 / 100),
+        //                 resizeMode: 'contain',
+        //             }}
+        //         />
+        //     </Animatable.View>
         // </SafeAreaView>
+        <SafeAreaView style={styles.container}>
+            <FastImage
+                source={require('../assets/gifs/splash-three.gif')}
+                style={styles.gif}
+                resizeMode={FastImage.resizeMode.cover}
+            />
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-    mainContainer: {
-        flex: 1,
-        width: windowWidth,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colours.primaryWhite
-    },
-    fontStyle4: {
-        fontFamily: 'Proxima Nova Alt Regular',
-        color: colours.kapraMain,
-        fontSize: 34,
-        fontWeight: 'bold',
-    },
-    // container: {
+    // mainContainer: {
     //     flex: 1,
-    //     backgroundColor: '#FFFFFF',
+    //     width: windowWidth,
     //     justifyContent: 'center',
     //     alignItems: 'center',
+    //     backgroundColor: colours.primaryWhite
     // },
-    // gif: {
-    //     width: '100%',
-    //     height: '100%',
+    // fontStyle4: {
+    //     fontFamily: 'Proxima Nova Alt Regular',
+    //     color: colours.kapraMain,
+    //     fontSize: 34,
+    //     fontWeight: 'bold',
     // },
+    container: {
+        flex: 1,
+        backgroundColor: '#FFFFFF',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    gif: {
+        width: '100%',
+        height: '100%',
+    },
 });

@@ -20,6 +20,7 @@ import { FONTS } from '../styles/typography';
 
 import { AppContext } from '../../Context/appContext';
 import { LoaderContext } from '../../Context/loaderContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const GroLoginScreenThree = () => {
     const navigation = useNavigation();
@@ -35,6 +36,8 @@ const GroLoginScreenThree = () => {
     const [passwordError, setPasswordError] = useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = useState('');
     const [passwordErrorMessage, setPasswordErrorMessage] = useState('');
+
+    const insets = useSafeAreaInsets()
 
     const handleLogin = async () => {
         const EmailError = email === '';
@@ -85,7 +88,12 @@ const GroLoginScreenThree = () => {
     return (
         <SafeAreaView style={styles.mainContainer}>
             <KeyboardAvoidingView
-                style={{ flex: 1 }}
+                style={Platform.OS === 'android' ? {
+                    flex: 1,
+                    paddingBottom: insets.bottom
+                } : {
+                    flex: 1,
+                }}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">

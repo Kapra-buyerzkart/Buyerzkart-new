@@ -33,7 +33,7 @@ export default function OrderlistCard({
                 />
                 <View>
                     <Text style={styles.headerText}>#{Data.orderNumber}</Text>
-                    <Text style={styles.timeText}>Placed on {moment(Data.orderDate).utcOffset('+05:30').format('DD MMM, YYYY')} at {moment(Data.orderDate).utcOffset('+05:30').format('hh:mm a').toUpperCase()}</Text>
+                    <Text style={styles.timeText}>Created on {moment(Data.orderDate).utcOffset('+05:30').format('DD MMM, YYYY')} at {moment(Data.orderDate).utcOffset('+05:30').format('hh:mm a').toUpperCase()}</Text>
                 </View>
             </View>
 

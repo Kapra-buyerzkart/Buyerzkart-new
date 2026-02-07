@@ -188,7 +188,7 @@ export default function GroProductCard({
                 </View>
                 <View style={{ height: windowWidth*(9/100),justifyContent:'center' }}>
                 {
-                    SpecialPrice > 0&& (((Price-SpecialPrice)/Price)*100).toFixed(0) > 0 &&(
+                    SpecialPrice > 0 && (((Price-SpecialPrice)/Price)*100).toFixed(0) > 0 &&(
                         <Text style={styles.offerText}>
                             {(((Price-SpecialPrice)/Price)*100).toFixed(0)}% Off
                         </Text>

@@ -13,7 +13,7 @@ import {
     ActivityIndicator,
 } from 'react-native';
 import React, { useRef, useState, useEffect } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { FONTS } from '../styles/typography';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -44,6 +44,7 @@ const GroLoginOtpScreen = ({ navigation }) => {
     const [timer, setTimer] = useState(60); // 1 minute
     const [isResendDisabled, setIsResendDisabled] = useState(true);
     const [loading, setLoading] = useState(false)
+    const insets = useSafeAreaInsets()
 
     // Countdown effect
     useEffect(() => {
@@ -247,7 +248,12 @@ const GroLoginOtpScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.mainContainer}>
             <KeyboardAvoidingView
-                style={{ flex: 1 }}
+                style={Platform.OS === 'android' ? {
+                    flex: 1,
+                    paddingBottom: insets.bottom
+                } : {
+                    flex: 1,
+                }}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">

@@ -65,7 +65,10 @@ import GroProductCardNew from '../components/GroProductCardNew'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import CategoryGridNew from '../components/CategoryGridNew';
 import GroLoginScreen from './GroLoginScreen';
-import Svg, { Defs, Path, RadialGradient, Stop } from 'react-native-svg';
+import Svg, { Defs, Path, RadialGradient, Stop, LinearGradient as SvgLinearGradient } from 'react-native-svg';
+import { TextInput } from 'react-native-gesture-handler';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AuthButtonNew from '../components/AuthButtonNew';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -103,6 +106,47 @@ const GroHomeScreen = ({ navigation, route }) => {
   const [activeIndexThree, setActiveIndexThree] = useState(0);
   const [activeIndexFour, setActiveIndexFour] = useState(0);
   // const [locationNotFetched, setLocationNotFetched] = useState(false);
+
+  const insets = useSafeAreaInsets()
+
+  const CurvedSection = ({ children }) => {
+    const height = hp("29%");     // total height of section
+    const curveDepth = 50; // downward curve depth
+
+    const d = `
+    M 0 0
+    C ${windowWidth * 0.25} ${curveDepth},
+      ${windowWidth * 0.75} ${curveDepth},
+      ${windowWidth} 0
+    L ${windowWidth} ${height}
+    L 0 ${height}
+    Z
+  `;
+
+    return (
+      <View style={{
+        width: windowWidth,
+        height,
+        position: "relative"
+      }}>
+        {/* Background curved SVG */}
+        <Svg width={windowWidth} height={height} style={styles.curvedSectionSvg}>
+          <Defs>
+            <SvgLinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+              <Stop offset="0" stopColor="#FFC7AC" />
+              <Stop offset="1" stopColor="#FFFFFF" />
+            </SvgLinearGradient>
+          </Defs>
+          <Path d={d} fill="url(#grad)" />
+        </Svg>
+
+        {/* Content over the curved shape */}
+        <View style={styles.curvedSectionView}>
+          {children}
+        </View>
+      </View>
+    );
+  }
 
   useEffect(() => {
     // console.log('profile', profile)
@@ -623,6 +667,12 @@ const GroHomeScreen = ({ navigation, route }) => {
         end={{ x: 0, y: 1 }}
         // colors={[item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange, colours.kapraWhite]}
         colors={['#d08785', '#d08785', '#d08785', '#d08785', colours.kapraWhite, colours.kapraWhite]}
+        // colors={[
+        //   item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange,
+        //   item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange,
+        //   item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange,
+        //   item?.Link && item?.Link.startsWith("#") ? item?.Link : colours.kapraOrange,
+        //   colours.kapraWhite, colours.kapraWhite]}
         style={profile.isPrime === true ? (
           { width: windowWidth, height: windowHeight * (44.5 / 100), justifyContent: 'flex-end', alignItems: 'center' }
         ) : (
@@ -1282,7 +1332,7 @@ const GroHomeScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      {/* {console.log('bCoin......', bCoin)} */}
+      {/* {console.log('profileprofile......', profile)} */}
       {/* Switch Con  */}
       {
         headerShow ?
@@ -1396,6 +1446,7 @@ const GroHomeScreen = ({ navigation, route }) => {
         <View style={profile.isPrime === true ? [styles.CarouselCon, {
           height: windowHeight * (41 / 100),
         }] : [styles.CarouselCon, { height: windowHeight * (39 / 100) }]}>
+          {/* {console.log('data.MobileMainBanners', data.MobileMainBanners)} */}
           <Carousel
             autoplay
             data={data.MobileMainBanners}
@@ -2103,6 +2154,7 @@ const GroHomeScreen = ({ navigation, route }) => {
               </View>
               <FlatList
                 // ItemSeparatorComponent={<View style={{ width: 10 }} />}
+                showsHorizontalScrollIndicator={false}
                 horizontal={true}
                 data={featuredData.slice(0, 4)}
                 contentContainerStyle={{
@@ -2874,13 +2926,62 @@ const GroHomeScreen = ({ navigation, route }) => {
         }
 
         {/* Feedback */}
-        <TouchableOpacity onPress={() => navigation.navigate('GroWriteToUsScreen')}>
+        {/* <TouchableOpacity onPress={() => navigation.navigate('GroWriteToUsScreen')}>
           <FastImage
             style={{ width: windowWidth, height: windowWidth * (45 / 100) }}
             source={require('../../assets/images/SugPro.png')}
             resizeMode={FastImage.resizeMode.contain}
           />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+
+        <View style={styles.searchingForSomethingView}>
+
+          <CurvedSection>
+
+            {/* ADD ANYTHING YOU WANT INSIDE! */}
+            {/* <View style={{ alignItems: "center" }}> */}
+            <View style={styles.searchingForSomethingViewTwo}>
+              <View>
+                <Image
+                  source={require("../../assets/images/boy.png")}
+                  style={styles.searchingForSomethingImageOne}
+                />
+                <Image
+                  source={require("../../assets/images/shadow.png")}
+                  style={styles.searchingForSomethingImageTwo}
+                />
+              </View>
+              <View style={styles.searchingForSomethingViewThree}>
+                <Text style={[styles.searchingForSomethingText, {
+                  color: "#000000"
+                }]}>Searching for something</Text>
+                <Text style={[styles.searchingForSomethingText, {
+                  color: "#FF0000"
+                }]}>but couldn't find it?</Text>
+              </View>
+
+            </View>
+          </CurvedSection>
+
+        </View>
+        <View style={styles.tellusContainer}>
+          <Text style={styles.tellUsText}>Don't worry. Tel us what you require</Text>
+          {/* <View style={styles.searchContainerTwo}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="example: apple"
+              placeholderTextColor="#767676"
+            />
+            <TouchableOpacity style={styles.enterContainer}>
+              <Text style={styles.enterText}>enter</Text>
+            </TouchableOpacity>
+          </View> */}
+          <TouchableOpacity onPress={() => navigation.navigate('GroWriteToUsScreen')} style={styles.suggestButton}>
+            <Text style={styles.suggestText}>Suggest Now</Text>
+          </TouchableOpacity>
+          <Image style={styles.kapraLogo} source={require("../../assets/images/logo-new.png")} />
+          <Text style={[styles.tellUsText, { marginTop: hp("2.5%") }]}>Is here to help you</Text>
+        </View>
 
       </ScrollView>
 
@@ -3025,8 +3126,17 @@ const GroHomeScreen = ({ navigation, route }) => {
               }}
             />
             <Text style={[styles.fontStyle3, { textAlign: "center" }]} numberOfLines={4}>{storeCloseMsg}</Text>
-            <View style={{ flexDirection: 'row', width: windowWidth * (90 / 100), justifyContent: 'space-around' }}>
-              <AuthButton
+            <View style={Platform.OS === 'android' ? {
+              flexDirection: 'row',
+              width: windowWidth * (90 / 100),
+              justifyContent: 'space-around',
+              marginBottom: insets.bottom
+            } : {
+              flexDirection: 'row',
+              width: windowWidth * (90 / 100),
+              justifyContent: 'space-around',
+            }}>
+              <AuthButtonNew
                 FirstColor={colours.kapraOrangeDark}
                 SecondColor={colours.kapraOrange}
                 OnPress={() => { setStoreCloseModalVisible(false) }}
@@ -3546,6 +3656,108 @@ const styles = StyleSheet.create({
   inactiveDot: {
     backgroundColor: '#FFC4A3',
   },
+  curvedSectionSvg: {
+    position: "absolute"
+  },
+  curvedSectionView: {
+    flex: 1,
+    paddingTop: 40,
+    justifyContent: "flex-end",
+    paddingBottom: hp("0.4%"),
+  },
+  searchingForSomethingView: {
+    flex: 1
+  },
+  searchingForSomethingViewTwo: {
+    flexDirection: "row",
+  },
+  searchingForSomethingImageOne: {
+    width: wp("42.51%"),
+    height: hp("19.03%"),
+    resizeMode: "contain",
+    marginLeft: wp("2%")
+  },
+  searchingForSomethingImageTwo: {
+    width: wp("31.62%"),
+    height: hp("1.18%"),
+    resizeMode: "contain",
+    top: -4
+  },
+  searchingForSomethingViewThree: {
+    // backgroundColor: "red",
+    justifyContent: "flex-end",
+    paddingBottom: hp("2%")
+  },
+  searchingForSomethingText: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: wp("3.95%"),
+  },
+  tellusContainer: {
+    height: hp("36.05%"),
+    width: wp("90.69%"),
+    backgroundColor: "#481300",
+    alignSelf: "center",
+    borderRadius: 20,
+    alignItems: "center",
+    marginBottom: hp("7.5%"),
+  },
+  tellUsText: {
+    fontFamily: 'Poppins-Regular',
+    color: "#FFFFFF",
+    fontSize: wp("3.95%"),
+    marginTop: hp("3.1%")
+  },
+  searchContainerTwo: {
+    marginTop: hp('1.7%'),
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#D9D9D9',
+    borderRadius: 20,
+    paddingLeft: wp('6%'),
+    height: hp('5.4%'),
+    marginHorizontal: wp('5%'),
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: wp('3.8%'),
+    // marginHorizontal: wp('1.5%'),
+    color: '#000000',
+    fontFamily: 'Poppins-Light',
+  },
+  enterContainer: {
+    width: wp("16%"),
+    height: hp('3.5%'),
+    // backgroundColor: 'red',
+    // marginLeft: wp('2%'),
+    justifyContent: "center",
+    alignItems: "center",
+    borderLeftWidth: 2,
+    borderLeftColor: "#000000",
+    marginLeft: wp("1%"),
+    paddingRight: wp("1%")
+  },
+  enterText: {
+    color: "#000000",
+    fontSize: wp("3.8%"),
+    fontFamily: 'Poppins-SemiBold',
+  },
+  kapraLogo: {
+    width: wp("64.65%"),
+    height: hp("10.73%"),
+    marginTop: hp("2%"),
+    resizeMode: "contain"
+  },
+  suggestButton: {
+    borderRadius: 10,
+    backgroundColor: '#F25000',
+    padding: wp('2%'),
+    marginTop: hp('1.5%')
+  },
+  suggestText: {
+    color: "#FFFFFF",
+    fontFamily: "Poppins-Bold",
+    fontSize: wp('3%')
+  }
 });
 
 

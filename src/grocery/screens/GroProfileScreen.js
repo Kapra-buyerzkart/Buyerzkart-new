@@ -129,7 +129,7 @@ const GroProfileScreen = ({ navigation, route }) => {
           )
         }
         <View style={styles.nameSmallCon}>
-          <TouchableOpacity style={styles.nameConSmallBtn} onPress={() => Linking.openURL('whatsapp://send?text=Hi Kapra Daily..&phone=+919539701110')}>
+          <TouchableOpacity style={styles.nameConSmallBtn} onPress={() => Linking.openURL('whatsapp://send?text=Hi Kapra Daily..&phone=+919048801110')}>
             <View style={styles.nameConSmallIcon}>
               {showIcon('whatsapp', colours.kapraBlackLow, windowWidth * (5 / 100))}
             </View>

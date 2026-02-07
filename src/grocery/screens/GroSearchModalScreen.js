@@ -7,7 +7,8 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  KeyboardAvoidingView
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TextInput } from 'react-native-gesture-handler';
@@ -21,6 +22,10 @@ import { getSearchAutoCompleteList } from '../api';
 import { LoaderContext } from '../../Context/loaderContext';
 import { AppContext } from '../../Context/appContext';
 import Header from '../components/Header';
+import GroProductCardTwo from '../components/GroProductCardTwo';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Image } from 'react-native-elements';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 const windowWidth = Dimensions.get('window').width;
@@ -29,11 +34,12 @@ const windowHeight = Dimensions.get('window').height;
 export default function GroSearchModalScreen({ navigation }) {
 
   const searchInputRef = createRef();
-  
+
   const [data, setData] = React.useState(null);
   const [historyData, setHistoryData] = React.useState(null);
   const [keyword, setkeyword] = React.useState('');
-  
+
+  const insets = useSafeAreaInsets()
 
   const _fetchHomeData = async () => {
     setHistoryData(JSON.parse(await AsyncStorage.getItem('SearchGHistory')))
@@ -73,12 +79,16 @@ export default function GroSearchModalScreen({ navigation }) {
 
 
   return (
-    <SafeAreaView style={styles.mainContainer}>
-
+    <SafeAreaView style={[styles.mainContainer,
+    {
+      paddingBottom: insets.bottom
+    }
+    ]}>
+      {/* {console.log('data', data)} */}
       {/* Header Con  */}
       <View style={styles.headerCon}>
-        <TouchableOpacity style={styles.backButtonCon} onPress={()=>navigation.goBack()}>
-          {showIcon('back2', colours.kapraBlack, windowWidth*(5/100))}
+        <TouchableOpacity style={styles.backButtonCon} onPress={() => navigation.goBack()}>
+          {showIcon('back2', colours.kapraBlack, windowWidth * (5 / 100))}
         </TouchableOpacity>
         <Text style={styles.headerText}>Search</Text>
       </View>
@@ -100,13 +110,20 @@ export default function GroSearchModalScreen({ navigation }) {
       </View>
 
       {/* Items List  */}
+      {/* <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      > */}
       <View style={{ width: windowWidth * (90 / 100), justifyContent: 'flex-start' }}>
+        {/* <View style={{
+        // backgroundColor: 'red'
+      }}> */}
         {
           data !== null && data.length > 0 && keyword !== '' ?
             <>
               <View style={{ backgroundColor: colours.primaryWhite, width: windowWidth * (90 / 100), height: windowHeight * (7 / 100), alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text style={styles.fontStyle1}>
-                  Result(s) found : {data.length}
+                  {/* Result(s) found : {data.length} */}
+                  {data.length} Result(s) found
                 </Text>
                 <TouchableOpacity
                   style={styles.viewAllButton}
@@ -117,65 +134,97 @@ export default function GroSearchModalScreen({ navigation }) {
               <FlatList
                 showsVerticalScrollIndicator={false}
                 data={data}
+                numColumns={3}
+                columnWrapperStyle={{
+                  justifyContent: 'space-between',
+                  marginBottom: 10
+                }}
                 renderItem={({ item }, index) => (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => gotoSearch(item)}
-                      style={styles.searchItem}
-                    >
-                      <FastImage
-                        style={styles.imageStyle}
-                        source={{
-                          uri: getImage(item.featuredImage),
-                          priority: FastImage.priority.normal,
-                        }}
-                        resizeMode={FastImage.resizeMode.contain}
-                      />
-                      <View>
-                        <Text style={[styles.fontStyle1,{width: windowWidth*(60/100)}]} numberOfLines={2}>{item.ProductName.toUpperCase()}</Text>
-                        <Text style={styles.fontStyle2}>in {item.CatName}</Text>
-                      </View>
-                      <View style={styles.iconCon}>
-                        {showIcon('rightarrow', colours.primaryBlack, windowWidth * (5 / 100))}
-                      </View>
-                    </TouchableOpacity>
+                  // <>
+                  //   <TouchableOpacity
+                  //     onPress={() => gotoSearch(item)}
+                  //     style={styles.searchItem}
+                  //   >
+                  //     <FastImage
+                  //       style={styles.imageStyle}
+                  // source={{
+                  //   uri: getImage(item.featuredImage),
+                  //   priority: FastImage.priority.normal,
+                  // }}
+                  //       resizeMode={FastImage.resizeMode.contain}
+                  //     />
+                  //     <View>
+                  //       <Text style={[styles.fontStyle1, { width: windowWidth * (60 / 100) }]} numberOfLines={2}>{item.ProductName.toUpperCase()}</Text>
+                  //       <Text style={styles.fontStyle2}>in {item.CatName}</Text>
+                  //     </View>
+                  //     <View style={styles.iconCon}>
+                  //       {showIcon('rightarrow', colours.primaryBlack, windowWidth * (5 / 100))}
+                  //     </View>
+                  //   </TouchableOpacity>
 
-                  </>
+                  // </>
+                  <GroProductCardTwo onPress={() => gotoSearch(item)} item={item} />
                 )}
-                contentContainerStyle={{ paddingBottom: windowHeight * (20 / 100) }}
+                contentContainerStyle={{
+                  paddingBottom: windowHeight * (20 / 100),
+                  paddingTop: 1,
+                  paddingHorizontal: 1
+                  // justifyContent: 'center',
+                  // alignItems: 'center'
+                }}
               />
             </>
             :
-            historyData !== null && historyData.length > 0 ?
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={historyData}
-                inverted={true}
-                renderItem={({ item }, index) => (
-                  <>
-                    <TouchableOpacity
-                      onPress={() => gotoSearch(item)}
-                      style={styles.searchItem}
-                    > 
-                      <View style={styles.iconCon}>
-                        {showIcon('clock', colours.primaryBlack, windowWidth * (5 / 100))}
-                      </View>
-                      <View>
-                        <Text style={styles.fontStyle1} numberOfLines={2}>{item.ProductName.toUpperCase()}</Text>
-                        <Text style={styles.fontStyle2}>in {item.CatName}</Text>
-                      </View>
-                      <View style={styles.iconCon}>
-                        {showIcon('rightarrow', colours.primaryBlack, windowWidth * (5 / 100))}
-                      </View>
-                    </TouchableOpacity>
-
-                  </>
-                )}
-              />
+            keyword !== '' && data !== null && data.length === 0 ?
+              <View style={{
+                height: windowHeight * 0.4,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                {/* <Text style={{
+                  fontFamily: "Outfit-Bold",
+                  fontSize: wp('3.5%')
+                }}>No Products Found</Text> */}
+                <Image style={{
+                  height: wp('65%'),
+                  width: wp('65%'),
+                  resizeMode: 'contain'
+                }}
+                  source={require('../../assets/images/no-products.png')}
+                />
+              </View>
               :
-              null
+              historyData !== null && historyData.length > 0 ?
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  data={historyData}
+                  inverted={true}
+                  renderItem={({ item }, index) => (
+                    <>
+                      <TouchableOpacity
+                        onPress={() => gotoSearch(item)}
+                        style={styles.searchItem}
+                      >
+                        <View style={styles.iconCon}>
+                          {showIcon('clock', colours.primaryBlack, windowWidth * (5 / 100))}
+                        </View>
+                        <View>
+                          <Text style={styles.fontStyle1} numberOfLines={2}>{item.ProductName.toUpperCase()}</Text>
+                          <Text style={styles.fontStyle2}>in {item.CatName}</Text>
+                        </View>
+                        <View style={styles.iconCon}>
+                          {showIcon('rightarrow', colours.primaryBlack, windowWidth * (5 / 100))}
+                        </View>
+                      </TouchableOpacity>
+
+                    </>
+                  )}
+                />
+                :
+                null
         }
       </View>
+      {/* </KeyboardAvoidingView> */}
     </SafeAreaView>
   );
 }
@@ -187,20 +236,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerCon: {
-    width:windowWidth,
-    height: windowHeight*(8/100),
+    width: windowWidth,
+    height: windowHeight * (8 / 100),
     backgroundColor: colours.kapraWhite,
-    flexDirection:'row',
-    justifyContent:'flex-start',
-    alignItems:'center',
-    paddingHorizontal: windowWidth*(5/100)
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingHorizontal: windowWidth * (5 / 100)
   },
   backButtonCon: {
-    width: windowWidth*(10/100),
-    height: windowWidth*(10/100),
-    borderRadius: windowWidth*(10/100),
-    alignItems:'center',
-    justifyContent:'center',
+    width: windowWidth * (10 / 100),
+    height: windowWidth * (10 / 100),
+    borderRadius: windowWidth * (10 / 100),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   inputContainer: {
     borderRadius: windowHeight * (6 / 100),
@@ -217,22 +266,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 5,
     marginVertical: 5,
-    borderBottomWidth:2,
+    borderBottomWidth: 2,
     borderBottomColor: colours.lowWhite,
-    width: windowWidth*(90/100)
+    width: windowWidth * (90 / 100)
   },
   iconCon: {
     width: windowWidth * (10 / 100),
     height: windowWidth * (10 / 100),
-    alignItems:'center',
-    justifyContent:'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   imageStyle: {
     width: windowWidth * (15 / 100),
     height: windowWidth * (15 / 100),
     borderRadius: 5,
     marginLeft: windowWidth * (4.5 / 100),
-    marginRight:10
+    marginRight: 10
   },
   viewAllButton: {
     backgroundColor: colours.kapraWhiteLow,
@@ -270,7 +319,7 @@ const styles = StyleSheet.create({
   fontStyle2: {
     fontFamily: 'Lexend-Regular',
     fontSize: getFontontSize(11),
-    paddingTop:10,
+    paddingTop: 10,
     paddingLeft: 15,
     color: colours.kapraBlackLow,
   },

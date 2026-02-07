@@ -181,12 +181,12 @@ const GroWriteToUsScreen = ({ navigation }) => {
                 customerservice@kapradaily.com
                 </Text>
                 <Text style={[styles.fontStyle3, { color: colours.reviewBoxRed }]}>
-                  +91-9539701110
+                  +91-9048801110
                 </Text>
               </View>
               <View style={{ justifyContent: 'space-evenly' }}>
                 <TouchableOpacity 
-                  onPress={() => Linking.openURL(`tel:${9539701110}`)} 
+                  onPress={() => Linking.openURL(`tel:${9048801110}`)} 
                   style={{ height: windowHeight * (6 / 100) }}
                 >
                   <Text>{showIcon('call', colours.kapraOrange, windowWidth * (7 / 100))}</Text>
@@ -198,7 +198,7 @@ const GroWriteToUsScreen = ({ navigation }) => {
                   <Text>{showIcon('mail', colours.kapraOrange, windowWidth * (7 / 100))}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
-                  onPress={() => Linking.openURL('whatsapp://send?text=Hi Kapra Daily..&phone=+919539701110')} 
+                  onPress={() => Linking.openURL('whatsapp://send?text=Hi Kapra Daily..&phone=+919048801110')} 
                   style={{ height: windowHeight * (6 / 100) }}
                 >
                   <Text>{showIcon('whatsapp', colours.kapraOrange, windowWidth * (8 / 100))}</Text>
