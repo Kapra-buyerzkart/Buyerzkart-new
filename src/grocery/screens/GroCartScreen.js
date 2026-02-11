@@ -67,6 +67,7 @@ import {
   checkAvailability
 } from '../api';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -120,6 +121,9 @@ const GroCartScreen = ({ navigation, route }) => {
   const [storeCloseData, setStoreCloseData] = React.useState(null);
   const [availabiltyLoading, setAvailabiltyLoading] = useState(false)
   const [cartItemsIds, setCartItemsIds] = useState([])
+  const [addressConfirmationModal, setAddressConfirmationModal] = useState(false)
+  const [selectedArea, setSelectedArea] = useState(null)
+  const [selectedAddressForConfirm, setSelectedAddressForConfirm] = useState(null);
 
   const insets = useSafeAreaInsets();
 
@@ -210,96 +214,115 @@ const GroCartScreen = ({ navigation, route }) => {
         setGiftCardData(res7);
         let res4 = await addressList();
         setAddressData(res4 ? res4 : []);
-        if (res4.length == 1) {
-          if (res4[0].latitude !== null || res4[0].longitude !== null) {
+        // if (res4.length == 1) {
+        //   if (res4[0].latitude !== null || res4[0].longitude !== null) {
 
-            Alert.alert(
-              'ALERT',
-              `To ensure the best delivery experience, we've automatically selected the available delivery address for you. You can proceed with this address or cancel to add more address and choose from your saved addresses.\n\nനിങ്ങളുടെ ഏറ്റവും അടുത്തുള്ള അഡ്രസ് ഞങ്ങൾ ഓട്ടോമാറ്റിക്കായി സെലക്ട് ചെയ്തിട്ടുണ്ട്. സ്ഥിതീകരിക്കാൻ 'OK'  ക്ലിക്ക് ചെയ്യുക. ഈ അഡ്രസ് മാറ്റുവാനോ പുതിയ അഡ്രസ്സ് ചേർക്കാനോ 'CANCEL' ക്ലിക്ക് ചെയ്ത് നിങ്ങളുടെ സേവ് ചെയ്ത വിലാസങ്ങളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക.`,
-              [
-                {
-                  text: 'Cancel',
-                  onPress: () => null,
-                  style: 'cancel',
-                },
-                {
-                  text: 'OK',
-                  onPress: async () => {
-                    await editPincode({
-                      pincodeId: res4[0].pincodeAreaId,
-                      area: res4[0].area,
-                    });
-                    setSelectedAddress(res4[0])
-                    await checkStoreClose()
-                    let res2 = await getCartSummary(res4[0] ? res4[0]?.custAdressId : 0, deliveryMode);
+        //     Alert.alert(
+        //       'ALERT',
+        //       `To ensure the best delivery experience, we've automatically selected the available delivery address for you. You can proceed with this address or cancel to add more address and choose from your saved addresses.\n\nനിങ്ങളുടെ ഏറ്റവും അടുത്തുള്ള അഡ്രസ് ഞങ്ങൾ ഓട്ടോമാറ്റിക്കായി സെലക്ട് ചെയ്തിട്ടുണ്ട്. സ്ഥിതീകരിക്കാൻ 'OK'  ക്ലിക്ക് ചെയ്യുക. ഈ അഡ്രസ് മാറ്റുവാനോ പുതിയ അഡ്രസ്സ് ചേർക്കാനോ 'CANCEL' ക്ലിക്ക് ചെയ്ത് നിങ്ങളുടെ സേവ് ചെയ്ത വിലാസങ്ങളിൽ നിന്ന് തിരഞ്ഞെടുക്കുക.`,
+        //       [
+        //         {
+        //           text: 'Cancel',
+        //           onPress: () => null,
+        //           style: 'cancel',
+        //         },
+        //         {
+        //           text: 'OK',
+        //           onPress: async () => {
+        //             await editPincode({
+        //               pincodeId: res4[0].pincodeAreaId,
+        //               area: res4[0].area,
+        //             });
+        //             setSelectedAddress(res4[0])
+        //             await checkStoreClose()
+        //             let res2 = await getCartSummary(res4[0] ? res4[0]?.custAdressId : 0, deliveryMode);
 
-                    setCartSummary(res2);
-                    setSummaryLoading(false)
-                    setAppliedGiftCards(res2.giftCardsApplied)
-                    setAppliedGiftCardsSum(res2.giftCarDamount)
-                    await reloadData()
-                  },
-                },
-              ],
-              { cancelable: false },
-            );
+        //             setCartSummary(res2);
+        //             setSummaryLoading(false)
+        //             setAppliedGiftCards(res2.giftCardsApplied)
+        //             setAppliedGiftCardsSum(res2.giftCarDamount)
+        //             await reloadData()
+        //           },
+        //         },
+        //       ],
+        //       { cancelable: false },
+        //     );
 
-            // Toast.show('Your location changed. Please confirm the location before place an order!')
+        //     // Toast.show('Your location changed. Please confirm the location before place an order!')
+        //   }
+        // } else if (!selectedAddress) {
+        //   Geolocation.getCurrentPosition(async (info) => {
+        //     let res6 = await getShortestAddress(info.coords.latitude, info.coords.longitude);
+        //     let add = res4.find((obj) => obj.custAdressId == res6.custAddressId)
+        //     if (add && (add.latitude !== null && add.longitude !== null)) {
+        //       // Toast.show('Your sddress location changed. Please confirm the sddress location before place an order!')
+        //       await editPincode({
+        //         pincodeId: add.pincodeAreaId,
+        //         area: add.area,
+        //       });
+        //       setSelectedAddress(add)
+        //       await checkStoreClose()
+        //       let res2 = await getCartSummary(add ? add?.custAdressId : 0, deliveryMode);
+        //       setCartSummary(res2);
+        //       setSummaryLoading(false)
+        //       setAppliedGiftCards(res2.giftCardsApplied)
+        //       setAppliedGiftCardsSum(res2.giftCarDamount)
+        //       await reloadData()
+        //       // Alert.alert(
+        //       //   'ALERT',
+        //       //   `To ensure the best delivery experience, we've automatically selected the nearest delivery address for you. You can proceed with this address or cancel to choose from your saved addresses.`,
+        //       //   [
+        //       //     {
+        //       //       text: 'Cancel',
+        //       //       onPress: () => null,
+        //       //       style: 'cancel',
+        //       //     },
+        //       //     {
+        //       //       text: 'Proceed',
+        //       //       onPress: async () =>{
+        //       //         await editPincode({
+        //       //           pincodeId: add.pincodeAreaId,
+        //       //           area: add.area,
+        //       //         });
+        //       //         setSelectedAddress(add)
+        //       //         let res2 = await getCartSummary(add?add?.custAdressId:0,deliveryMode);
+        //       //         setCartSummary(res2);
+        //       //         setSummaryLoading(false)
+        //       //         setAppliedGiftCards(res2.giftCardsApplied)
+        //       //         setAppliedGiftCardsSum(res2.giftCarDamount)
+        //       //         await reloadData()
+        //       //       },
+        //       //     },
+        //       //   ],
+        //       //   { cancelable: false },
+        //       // );
+        //     }
+        //   });
+        // } else {
+        //   let res2 = await getCartSummary(selectedAddress ? selectedAddress?.custAdressId : 0, deliveryMode);
+        //   setCartSummary(res2);
+        //   setSummaryLoading(false)
+        //   setAppliedGiftCards(res2.giftCardsApplied)
+        //   setAppliedGiftCardsSum(res2.giftCarDamount)
+        // }
+        if (res4.length === 1) {
+          // Single address → no auto-selection, just confirmation
+          if (selectedAddress) {
+            Alert.alert("Confirmation", `Your current delivery address is ${selectedAddress.area}`);
+          } else {
+            setAddressModalVisible(true); // user must choose manually
           }
         } else if (!selectedAddress) {
-          Geolocation.getCurrentPosition(async (info) => {
-            let res6 = await getShortestAddress(info.coords.latitude, info.coords.longitude);
-            let add = res4.find((obj) => obj.custAdressId == res6.custAddressId)
-            if (add && (add.latitude !== null && add.longitude !== null)) {
-              // Toast.show('Your sddress location changed. Please confirm the sddress location before place an order!')
-              await editPincode({
-                pincodeId: add.pincodeAreaId,
-                area: add.area,
-              });
-              setSelectedAddress(add)
-              await checkStoreClose()
-              let res2 = await getCartSummary(add ? add?.custAdressId : 0, deliveryMode);
-              setCartSummary(res2);
-              setSummaryLoading(false)
-              setAppliedGiftCards(res2.giftCardsApplied)
-              setAppliedGiftCardsSum(res2.giftCarDamount)
-              await reloadData()
-              // Alert.alert(
-              //   'ALERT',
-              //   `To ensure the best delivery experience, we've automatically selected the nearest delivery address for you. You can proceed with this address or cancel to choose from your saved addresses.`,
-              //   [
-              //     {
-              //       text: 'Cancel',
-              //       onPress: () => null,
-              //       style: 'cancel',
-              //     },
-              //     {
-              //       text: 'Proceed',
-              //       onPress: async () =>{
-              //         await editPincode({
-              //           pincodeId: add.pincodeAreaId,
-              //           area: add.area,
-              //         });
-              //         setSelectedAddress(add)
-              //         let res2 = await getCartSummary(add?add?.custAdressId:0,deliveryMode);
-              //         setCartSummary(res2);
-              //         setSummaryLoading(false)
-              //         setAppliedGiftCards(res2.giftCardsApplied)
-              //         setAppliedGiftCardsSum(res2.giftCarDamount)
-              //         await reloadData()
-              //       },
-              //     },
-              //   ],
-              //   { cancelable: false },
-              // );
-            }
-          });
+          // Multiple addresses but none selected → show modal
+          setAddressModalVisible(true);
         } else {
-          let res2 = await getCartSummary(selectedAddress ? selectedAddress?.custAdressId : 0, deliveryMode);
+          // Already selected address → confirmation popup
+          Alert.alert("Confirmation", `Your current delivery address is ${selectedAddress.area}`);
+          let res2 = await getCartSummary(selectedAddress?.custAdressId, deliveryMode);
           setCartSummary(res2);
-          setSummaryLoading(false)
-          setAppliedGiftCards(res2.giftCardsApplied)
-          setAppliedGiftCardsSum(res2.giftCarDamount)
+          setSummaryLoading(false);
+          setAppliedGiftCards(res2.giftCardsApplied);
+          setAppliedGiftCardsSum(res2.giftCarDamount);
         }
       }
       let res5 = await getDeliverySlots();
@@ -635,38 +658,109 @@ const GroCartScreen = ({ navigation, route }) => {
     }
   }
 
-  const setNewAddress = async (value) => {
-    try {
-      showLoader(true)
-      // let res = await CheckAddressDeliverable(value.custAdressId);
-      if (value.latitude !== null || value.longitude !== null) {
-        await editPincode({
-          pincodeId: value.pincodeAreaId,
-          area: value.area,
-        });
-        const isStoreClosed = await checkStoreClose();
-        setSelectedAddress(value);
-        setSummaryLoading(true)
-        let res2 = await getCartSummary(value ? value?.custAdressId : 0, deliveryMode);
-        setCartSummary(res2);
-        setSummaryLoading(false)
-        setAppliedGiftCards(res2.giftCardsApplied)
-        setAppliedGiftCardsSum(res2.giftCarDamount)
-        await reloadData()
-        setAddressModalVisible(false)
-        if (!isStoreClosed) {
-          setDeliveryOptionModal(true)
-        }
-        // scrollViewRef.current.scrollToEnd({ animated: true })
-      } else {
-        Toast.show('Failed to locate your address. Please edit address or Add new one')
-      }
+  // const setNewAddress = async (value) => {
+  //   try {
+  //     showLoader(true)
+  //     // let res = await CheckAddressDeliverable(value.custAdressId);
+  //     if (value.latitude !== null || value.longitude !== null) {
+  //       Alert.alert(`Your order will be delivered to ${value.area} Your cart might have  been updated`)
+  //       await editPincode({
+  //         pincodeId: value.pincodeAreaId,
+  //         area: value.area,
+  //       });
+  //       const isStoreClosed = await checkStoreClose();
+  //       setSelectedAddress(value);
+  //       setSummaryLoading(true)
+  //       let res2 = await getCartSummary(value ? value?.custAdressId : 0, deliveryMode);
+  //       setCartSummary(res2);
+  //       setSummaryLoading(false)
+  //       setAppliedGiftCards(res2.giftCardsApplied)
+  //       setAppliedGiftCardsSum(res2.giftCarDamount)
+  //       await reloadData()
+  //       setAddressModalVisible(false)
+  //       if (!isStoreClosed) {
+  //         setDeliveryOptionModal(true)
+  //       }
+  //       // scrollViewRef.current.scrollToEnd({ animated: true })
+  //     } else {
+  //       Toast.show('Failed to locate your address. Please edit address or Add new one')
+  //     }
 
-    } catch (err) {
-    } finally {
-      showLoader(false)
+  //   } catch (err) {
+  //   } finally {
+  //     showLoader(false)
+  //   }
+  // }
+
+  // const setNewAddress = async (value) => {
+  //   try {
+  //     // showLoader(true);
+
+  //     if (value.latitude !== null || value.longitude !== null) {
+
+  //       // Alert.alert(
+  //       //   "Confirmation",
+  //       //   `Your order will be delivered to ${value.area}. Your cart might have been updated.`,
+  //       //   [
+  //       //     {
+  //       //       text: "OK",
+  //       //       onPress: async () => {
+  //       //         showLoader(true);
+  //       //         await editPincode({
+  //       //           pincodeId: value.pincodeAreaId,
+  //       //           area: value.area,
+  //       //         });
+
+  //       //         const isStoreClosed = await checkStoreClose();
+  //       //         setSelectedAddress(value);
+  //       //         setSummaryLoading(true);
+
+  //       //         let res2 = await getCartSummary(
+  //       //           value ? value?.custAdressId : 0,
+  //       //           deliveryMode
+  //       //         );
+
+  //       //         setCartSummary(res2);
+  //       //         setSummaryLoading(false);
+  //       //         setAppliedGiftCards(res2.giftCardsApplied);
+  //       //         setAppliedGiftCardsSum(res2.giftCarDamount);
+
+  //       //         await reloadData();
+  //       //         setAddressModalVisible(false);
+
+  //       //         if (!isStoreClosed) {
+  //       //           setDeliveryOptionModal(true);
+  //       //         }
+  //       //         showLoader(false);
+  //       //       }
+  //       //     }
+  //       //   ]
+  //       // );
+  //       setSelectedArea(value.area)
+  //       setSelectedAddressForConfirm(value);
+  //       setAddressConfirmationMoadal(true)
+  //     } else {
+  //       Toast.show(
+  //         "Failed to locate your address. Please edit address or add a new one"
+  //       );
+  //       showLoader(false);
+  //     }
+
+  //   } catch (err) {
+  //     console.log(err);
+  //     showLoader(false);
+  //   }
+  // };
+
+  const setNewAddress = async (value) => {
+    if (value.latitude !== null || value.longitude !== null) {
+      setSelectedArea(value.area);
+      setSelectedAddressForConfirm(value);   // store full address object
+      setAddressConfirmationModal(true);     // open modal
+    } else {
+      Toast.show('Failed to locate your address. Please edit address or Add new one');
     }
-  }
+  };
 
   const razorPayUpdate = async (res) => {
     var options = {
@@ -1737,7 +1831,75 @@ const GroCartScreen = ({ navigation, route }) => {
       </View>
 
 
+      <Modal visible={addressConfirmationModal} transparent animationType="fade">
+        <View style={styles.addressConfirmationModalOverlay}>
+          <View style={styles.addressConfirmationModalContainer}>
 
+            <Text
+              style={styles.addressConfirmationModalContentText}
+            >
+              Your order will be delivered to{" "}
+              <Text
+                style={styles.addressConfirmationModalLocationText}
+              >
+                {selectedArea}
+              </Text>
+
+              {"\n\n"}
+
+              <Text
+                style={styles.addressConfirmationModalContentTextTwo}
+              >
+                *
+              </Text>
+
+              <Text
+                style={styles.addressConfirmationModalContentTextTwo}
+              >
+                {" "}
+                Your cart might have been updated.
+              </Text>
+            </Text>
+            <TouchableOpacity style={styles.okButton} onPress={async () => {
+              setAddressConfirmationModal(false);
+              showLoader(true);
+
+              const value = selectedAddressForConfirm; // 🔥 IMPORTANT FIX
+
+              await editPincode({
+                pincodeId: value.pincodeAreaId,
+                area: value.area,
+              });
+
+              const isStoreClosed = await checkStoreClose();
+              setSelectedAddress(value);
+              setSummaryLoading(true);
+
+              let res2 = await getCartSummary(
+                value ? value?.custAdressId : 0,
+                deliveryMode
+              );
+
+              setCartSummary(res2);
+              setSummaryLoading(false);
+              setAppliedGiftCards(res2.giftCardsApplied);
+              setAppliedGiftCardsSum(res2.giftCarDamount);
+
+              await reloadData();
+              setAddressModalVisible(false);
+
+              if (!isStoreClosed) {
+                setDeliveryOptionModal(true);
+              }
+
+              showLoader(false);
+            }}>
+              <Text style={styles.okButtonText}>OK</Text>
+            </TouchableOpacity>
+
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -2114,8 +2276,48 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     backgroundColor: colours.kapraRed,
   },
-
-
+  addressConfirmationModalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)'
+  },
+  addressConfirmationModalContainer: {
+    backgroundColor: colours.kapraWhite,
+    padding: wp('4.65%'),
+    borderRadius: 10,
+    width: '80%'
+  },
+  addressConfirmationModalContentText: {
+    textAlign: 'center',
+    fontFamily: 'Poppins-Regular',
+    color: colours.primaryBlack,
+    fontSize: wp('3.5%'),
+  },
+  addressConfirmationModalLocationText: {
+    color: colours.kapraOrange,
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: wp('3.5%'),
+  },
+  addressConfirmationModalContentTextTwo: {
+    color: colours.kapraRed,
+    fontFamily: 'Poppins-Italic',
+    fontSize: wp('2.8%'),
+  },
+  okButton: {
+    backgroundColor: colours.kapraOrange,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: '33%',
+    paddingVertical: hp('0.5%'),
+    borderRadius: 10,
+    marginTop: hp('0.5%')
+  },
+  okButtonText: {
+    color: colours.kapraWhite,
+    fontFamily: 'Poppins-Bold',
+    fontSize: wp('3%')
+  }
 });
 
 
