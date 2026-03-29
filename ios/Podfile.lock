@@ -159,7 +159,7 @@ PODS:
   - Permission-LocationWhenInUse (3.10.1):
     - RNPermissions
   - PromisesObjC (2.4.0)
-  - razorpay-core-pod (1.0.3)
+  - razorpay-core-pod (1.0.4)
   - razorpay-pod (1.5.0):
     - razorpay-core-pod
   - RCT-Folly (2021.07.22.00):
@@ -861,7 +861,7 @@ SPEC CHECKSUMS:
   OneSignalXCFramework: e458f7a374192598a1d66418e1b61481c3cdf0e9
   Permission-LocationWhenInUse: e4a1bdc6b9f4a7a598613a6a748bd186e937df34
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  razorpay-core-pod: ef0309dbf8e3e5a1330f6cad89dcf9226d8ef758
+  razorpay-core-pod: a5ee92704a114e9468436dcba9d9b6222f6d9899
   razorpay-pod: f634f1b8397eb54d547f25d35291f679545ddf17
   RCT-Folly: 8dc08ca5a393b48b1c523ab6220dfdcc0fe000ad
   RCTRequired: 5a024fdf458fa8c0d82fc262e76f982d4dcdecdd
@@ -928,6 +928,6 @@ SPEC CHECKSUMS:
   Yoga: 79dd7410de6f8ad73a77c868d3d368843f0c93e0
   YoutubePlayer-in-WKWebView: 2c3aa1d5ad8dded9f95ef12033af5dd8e55864b7
 
-PODFILE CHECKSUM: bd7f4a8cd38130abd95759f08ee2c482250acdd7
+PODFILE CHECKSUM: 493ce804b9691f142986269812ba3329b74fa12c
 
 COCOAPODS: 1.16.2

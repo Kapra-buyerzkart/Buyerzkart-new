@@ -47,20 +47,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict/>
-	<key>NSContactsUsageDescription</key>
-	<string>Your contacts access needed to activate "refer a friend" option.</string>
-	<key>NSLocationUsageDescription</key>
-	<string>Your location is used to locate delivery address by our delivery executives.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location is used to locate delivery address by our delivery executives.</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Your location is used to locate delivery address by our delivery executives.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your photo library to select and upload images.</string>
 	<key>FacebookAppID</key>
 	<string>1763796204222338</string>
 	<key>FacebookDisplayName</key>
@@ -72,6 +58,20 @@
 		<string>fbauth2</string>
 		<string>fbshareextension</string>
 	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict/>
+	<key>NSContactsUsageDescription</key>
+	<string>Your contacts access needed to activate "refer a friend" option.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Your location is used to locate delivery address by our delivery executives.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Your location is used to locate delivery address by our delivery executives.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is used to locate delivery address by our delivery executives.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your photo library to select and upload images.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Proxima Nova Alt Bold.otf</string>

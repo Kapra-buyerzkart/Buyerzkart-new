@@ -1,0 +1,16 @@
+Adding a custom script phase for Pod RNFBApp: [RNFB] Core Configuration
+Auto-linking React Native modules for target `Buyerskart`: BVLinearGradient, RCTYouTube, RNCAsyncStorage, RNCCheckbox, RNCClipboard, RNCMaskedView, RNCPicker, RNDeviceInfo, RNFBApp, RNFastImage, RNGestureHandler, RNImageColors, RNPermissions, RNReanimated, RNSVG, RNScreens, RNVectorIcons, SRSRadialGradient, react-native-blob-util, react-native-blur, react-native-contacts, react-native-fbsdk-next, react-native-geolocation, react-native-geolocation-service, react-native-maps, react-native-onesignal, react-native-otp-verify, react-native-razorpay, react-native-render-html, react-native-restart, react-native-safe-area-context, react-native-simple-toast, and react-native-webview
+Framework build type is static library
+[Codegen] Generating ./build/generated/ios/React-Codegen.podspec.json
+Analyzing dependencies
+Fetching podspec for `DoubleConversion` from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`
+[Codegen] Found FbreactnativespecSpec
+[!] Failed to load 'FBReactNativeSpec' podspec: 
+[!] Invalid `FBReactNativeSpec.podspec` file: wrong number of arguments (given 3, expected 1).
+
+ #  from /Users/oem/Projects/Buyerzkart-new/node_modules/react-native/React/FBReactNativeSpec/FBReactNativeSpec.podspec:52
+ #  -------------------------------------------
+ #  
+ >    use_react_native_codegen!(s)
+ #  end
+ #  -------------------------------------------
